@@ -1,5 +1,5 @@
 #include <QCoreApplication>
-#include "Toutatis.h"
+#include "toutatis.h"
 
 
 int main(int argc, char** argv)
