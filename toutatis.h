@@ -8,6 +8,7 @@
 class Toutatis : public QObject
 {
     Q_OBJECT
+    Q_CLASSINFO("D-Bus Interface", "com.noughmad.Toutatis")
 
 public:
     Toutatis(QObject* parent = 0);
@@ -23,7 +24,7 @@ public slots:
     void removeTask(const QString& project, const QString& task);
     void renameTask(const QString& project, const QString& task, const QString& name);
 
-    void currentProjectAndTask(QString& project, QString& task);
+    QString currentProjectAndTask(QString& task);
     void startTask(const QString& project, const QString& task);
     void stopTask(const QString& project, const QString& task);
     void stop();

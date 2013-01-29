@@ -1,0 +1,80 @@
+<!DOCTYPE node PUBLIC "-//freedesktop//DTD D-BUS Object Introspection 1.0//EN" "http://www.freedesktop.org/standards/dbus/1.0/introspect.dtd">
+<node>
+  <interface name="com.noughmad.Toutatis">
+    <signal name="projectChanged">
+      <arg name="name" type="s" direction="out"/>
+    </signal>
+    <signal name="taskChanged">
+      <arg name="project" type="s" direction="out"/>
+      <arg name="task" type="s" direction="out"/>
+    </signal>
+    <signal name="currentTaskChanged">
+      <arg name="project" type="s" direction="out"/>
+      <arg name="task" type="s" direction="out"/>
+    </signal>
+    <method name="projects">
+      <arg type="as" direction="out"/>
+    </method>
+    <method name="createProject">
+      <arg name="name" type="s" direction="in"/>
+      <arg name="client" type="s" direction="in"/>
+    </method>
+    <method name="createProject">
+      <arg name="name" type="s" direction="in"/>
+    </method>
+    <method name="tasks">
+      <arg type="as" direction="out"/>
+      <arg name="project" type="s" direction="in"/>
+    </method>
+    <method name="createTask">
+      <arg name="project" type="s" direction="in"/>
+      <arg name="task" type="s" direction="in"/>
+    </method>
+    <method name="removeTask">
+      <arg name="project" type="s" direction="in"/>
+      <arg name="task" type="s" direction="in"/>
+    </method>
+    <method name="renameTask">
+      <arg name="project" type="s" direction="in"/>
+      <arg name="task" type="s" direction="in"/>
+      <arg name="name" type="s" direction="in"/>
+    </method>
+    <method name="currentProjectAndTask">
+      <arg name="project" type="s" direction="out"/>
+      <arg name="task" type="s" direction="out"/>
+    </method>
+    <method name="startTask">
+      <arg name="project" type="s" direction="in"/>
+      <arg name="task" type="s" direction="in"/>
+    </method>
+    <method name="stopTask">
+      <arg name="project" type="s" direction="in"/>
+      <arg name="task" type="s" direction="in"/>
+    </method>
+    <method name="stop">
+    </method>
+    <method name="isTracking">
+      <arg type="b" direction="out"/>
+    </method>
+    <method name="addNote">
+      <arg name="project" type="s" direction="in"/>
+      <arg name="task" type="s" direction="in"/>
+      <arg name="note" type="s" direction="in"/>
+    </method>
+    <method name="addEvent">
+      <arg name="project" type="s" direction="in"/>
+      <arg name="task" type="s" direction="in"/>
+      <arg name="eventType" type="s" direction="in"/>
+      <arg name="start" type="x" direction="in"/>
+      <arg name="end" type="x" direction="in"/>
+      <arg name="message" type="s" direction="in"/>
+    </method>
+    <method name="addEvent">
+      <arg name="project" type="s" direction="in"/>
+      <arg name="task" type="s" direction="in"/>
+      <arg name="eventType" type="s" direction="in"/>
+      <arg name="start" type="x" direction="in"/>
+      <arg name="end" type="x" direction="in"/>
+    </method>
+  </interface>
+</node>

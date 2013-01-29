@@ -1,4 +1,5 @@
 #include "toutatis.h"
+#include "toutatisadaptor.h"
 
 #include <QSqlDatabase>
 #include <QSqlQuery>
@@ -38,6 +39,11 @@ Toutatis::Toutatis(QObject* parent) : QObject(parent)
     }
 
     Q_ASSERT(mDatabase.tables().size() == 3);
+
+    new ToutatisAdaptor(this);
+    QDBusConnection dbus = QDBusConnection::sessionBus();
+    dbus.registerObject("/Toutatis", this);
+    dbus.registerService("com.noughmad.Toutatis");
 }
 
 Toutatis::~Toutatis()
@@ -48,23 +54,23 @@ Toutatis::~Toutatis()
 void Toutatis::createTables()
 {
     QSqlQuery query;
-    query.exec("CREATE TABLE project "
+    query.exec("CREATE TABLE projects "
         "(_id INTEGER PRIMARY KEY, "
         "name TEXT, "
         "client TEXT, "
         "visible INTEGER DEFAULT 1);");
 
-    query.exec("CREATE TABLE task "
+    query.exec("CREATE TABLE tasks "
         "(_id INTEGER PRIMARY KEY, "
-        "project INTEGER REFERENCES project(_id), "
+        "project INTEGER REFERENCES projects(_id), "
         "name TEXT, "
         "active INTEGER DEFAULT 0, "
         "lastStart INTEGER DEFAULT -1, "
         "status INTEGER DEFAULT 1);");
 
-    query.exec("CREATE TABLE event "
+    query.exec("CREATE TABLE events "
         "(_id INTEGER PRIMARY KEY, "
-        "task INTEGER REFERENCES task(_id), "
+        "task INTEGER REFERENCES tasks(_id), "
         "start INTEGER, "
         "end INTEGER, "
         "duration INTEGER, "
@@ -132,9 +138,10 @@ void Toutatis::removeTask(const QString& project, const QString& task)
 
 }
 
-void Toutatis::currentProjectAndTask(QString& project, QString& task)
+QString Toutatis::currentProjectAndTask(QString& task)
 {
-
+    task = mCurrentTask;
+    return mCurrentProject;
 }
 
 void Toutatis::startTask(const QString& project, const QString& task)
