@@ -7,6 +7,6 @@ include_directories(${QT_INCLUDES} ${CMAKE_CURRENT_BINARY_DIR})
 set(Toutatis_SRCS toutatis.cpp main.cpp)
 qt4_automoc(${Toutatis_SRCS})
 add_executable(Toutatis ${Toutatis_SRCS})
-target_link_libraries(Toutatis ${QT_QTCORE_LIBRARY})
+target_link_libraries(Toutatis ${QT_QTCORE_LIBRARY} ${QT_QTSQL_LIBRARY})
 
 install(TARGETS Toutatis RUNTIME DESTINATION bin)

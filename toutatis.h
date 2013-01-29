@@ -3,6 +3,7 @@
 
 #include <QObject>
 #include <QStringList>
+#include <QSqlDatabase>
 
 class Toutatis : public QObject
 {
@@ -32,6 +33,9 @@ public slots:
 
 private:
     void output();
+
+private:
+    QSqlDatabase mDatabase;
 };
 
 #endif // Toutatis_H
