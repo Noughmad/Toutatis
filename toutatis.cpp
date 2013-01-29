@@ -36,6 +36,8 @@ Toutatis::Toutatis(QObject* parent) : QObject(parent)
     {
         qDebug() << "Found existing database in " << mDatabase.databaseName();
     }
+
+    Q_ASSERT(mDatabase.tables().size() == 3);
 }
 
 Toutatis::~Toutatis()
