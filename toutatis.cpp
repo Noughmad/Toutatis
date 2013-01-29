@@ -1,5 +1,6 @@
 #include "toutatis.h"
 #include "toutatisadaptor.h"
+#include "project.h"
 
 #include <QSqlDatabase>
 #include <QSqlQuery>
@@ -44,6 +45,13 @@ Toutatis::Toutatis(QObject* parent) : QObject(parent)
     QDBusConnection dbus = QDBusConnection::sessionBus();
     dbus.registerObject("/Toutatis", this);
     dbus.registerService("com.noughmad.Toutatis");
+
+    QSqlQuery projects;
+    projects.exec("SELECT _id FROM projects");
+    while (projects.next())
+    {
+        new Project(projects.value(0).toLongLong(), this);
+    }
 }
 
 Toutatis::~Toutatis()
@@ -88,6 +96,7 @@ QStringList Toutatis::projects() const
     {
         list << query.value(0).toString();
     }
+    qDebug() << "Returning projects: " << list;
     return list;
 }
 
@@ -98,44 +107,11 @@ void Toutatis::createProject(const QString& name, const QString& client)
     query.bindValue(":name", name);
     query.bindValue(":client", client);
     query.bindValue(":visible", 1);
-    query.exec();
+
+    bool ok = query.exec();
+    qDebug() << "Created project " << name << ok;
 
     emit projectChanged(name);
-}
-
-QStringList Toutatis::tasks(const QString& project)
-{
-    QSqlQuery query;
-    query.prepare("SELECT name FROM tasks WHIRE project = :project;");
-    query.bindValue(":project", project);
-
-    QStringList list;
-    while(query.next())
-    {
-        list << query.value(0).toString();
-    }
-    return list;
-}
-
-void Toutatis::createTask(const QString& project, const QString& task)
-{
-    QSqlQuery query;
-    query.prepare("INSERT INTO tasks (name, project) VALUES (:name, :project);");
-    query.bindValue(":name", task);
-    query.bindValue(":project", project);
-    query.exec();
-
-    emit taskChanged(project, task);
-}
-
-void Toutatis::renameTask(const QString& project, const QString& task, const QString& name)
-{
-
-}
-
-void Toutatis::removeTask(const QString& project, const QString& task)
-{
-
 }
 
 QString Toutatis::currentProjectAndTask(QString& task)
