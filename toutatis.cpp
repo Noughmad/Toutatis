@@ -138,7 +138,7 @@ bool Toutatis::isTracking()
     return !mCurrentProject.isEmpty() && !mCurrentTask.isEmpty();
 }
 
-void Toutatis::stop()
+void Toutatis::stopTracking()
 {
     if (isTracking())
     {

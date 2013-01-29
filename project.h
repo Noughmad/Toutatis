@@ -23,6 +23,8 @@ public:
 
     qlonglong id() const;
 
+    QString fullObjectPath() const;
+
 
 public slots:
 

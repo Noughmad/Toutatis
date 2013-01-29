@@ -34,7 +34,7 @@
       <arg name="project" type="s" direction="in"/>
       <arg name="task" type="s" direction="in"/>
     </method>
-    <method name="stop">
+    <method name="stopTracking">
     </method>
     <method name="isTracking">
       <arg type="b" direction="out"/>

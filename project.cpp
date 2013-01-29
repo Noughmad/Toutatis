@@ -1,5 +1,6 @@
 #include "project.h"
 #include "projectadaptor.h"
+#include "task.h"
 
 #include <QSqlQuery>
 #include <QVariant>
@@ -13,12 +14,26 @@ Project::Project(qlonglong id, QObject* parent)
 
     QDBusConnection dbus = QDBusConnection::sessionBus();
     bool ok = dbus.registerObject("/Toutatis/" + name(), this);
-    qDebug() << "Registered project " << ok;
+
+    QSqlQuery tasks;
+    tasks.prepare("SELECT _id FROM tasks WHERE project=:id");
+    tasks.bindValue(":id", mId);
+    tasks.exec();
+    while (tasks.next())
+    {
+        qDebug() << "Creating a task with id " << tasks.value(0);
+        new Task(tasks.value(0).toLongLong(), this);
+    }
 }
 
 Project::~Project()
 {
 
+}
+
+QString Project::fullObjectPath() const
+{
+    return QString("/Projects/%1").arg(mId);
 }
 
 QString Project::name() const
@@ -88,7 +103,7 @@ void Project::remove()
 QStringList Project::tasks()
 {
     QSqlQuery query;
-    query.prepare("SELECT name FROM tasks WHIRE project = :id;");
+    query.prepare("SELECT name FROM tasks WHERE project = :id;");
     query.bindValue(":id", mId);
     query.exec();
 
@@ -107,6 +122,8 @@ void Project::createTask(const QString& task)
     query.bindValue(":name", task);
     query.bindValue(":id", mId);
     query.exec();
+
+    new Task(query.lastInsertId().toLongLong(), this);
 }
 
 #include "project.moc"

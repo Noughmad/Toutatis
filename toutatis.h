@@ -22,7 +22,7 @@ public slots:
     QString currentProjectAndTask(QString& task);
     void startTask(const QString& project, const QString& task);
     void stopTask(const QString& project, const QString& task);
-    void stop();
+    void stopTracking();
     bool isTracking();
 
     void addNote(const QString& project, const QString& task, const QString& note);
