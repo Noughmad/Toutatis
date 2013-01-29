@@ -1,4 +1,5 @@
 #include "project.h"
+#include "projectadaptor.h"
 
 #include <QSqlQuery>
 #include <QVariant>
@@ -8,8 +9,11 @@ Project::Project(qlonglong id, QObject* parent)
 : QObject(parent)
 , mId(id)
 {
+    new ProjectAdaptor(this);
+
     QDBusConnection dbus = QDBusConnection::sessionBus();
-    dbus.registerObject("/Project/" + name(), this);
+    bool ok = dbus.registerObject("/Toutatis/" + name(), this);
+    qDebug() << "Registered project " << ok;
 }
 
 Project::~Project()
@@ -20,7 +24,7 @@ Project::~Project()
 QString Project::name() const
 {
     QSqlQuery query;
-    query.prepare("SELECT projects FROM projects WHERE _id=:id");
+    query.prepare("SELECT name FROM projects WHERE _id=:id");
     query.bindValue(":id", mId);
     query.exec();
 
@@ -44,7 +48,7 @@ void Project::setName(const QString& name)
 QString Project::client() const
 {
     QSqlQuery query;
-    query.prepare("SELECT projects FROM projects WHERE _id=:id");
+    query.prepare("SELECT client FROM projects WHERE _id=:id");
     query.bindValue(":id", mId);
     query.exec();
 

@@ -50,6 +50,7 @@ Toutatis::Toutatis(QObject* parent) : QObject(parent)
     projects.exec("SELECT _id FROM projects");
     while (projects.next())
     {
+        qDebug() << "Creating a project with id " << projects.value(0);
         new Project(projects.value(0).toLongLong(), this);
     }
 }
