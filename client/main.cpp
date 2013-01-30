@@ -1,9 +1,22 @@
+#include "toutatis_interface.h"
+
 #include <QCoreApplication>
 #include <QStringList>
 
-#include "toutatis_interface.h"
+#include <iostream>
 
+using namespace std;
 using namespace com::noughmad;
+
+void printUsage()
+{
+    cout << "Usage: toutatis (start|stop) [arguments]" << endl;
+    cout << "       toutatis <type> <command> [arguments]" << endl;
+    cout << "       toutatis --help" << endl;
+    cout << "       toutatis <type> --help" << endl;
+    cout << endl;
+    cout << "Possible types are 'project', 'task', 'event' or 'note'";
+}
 
 int main(int argc, char** argv)
 {
@@ -16,9 +29,29 @@ int main(int argc, char** argv)
         0
     );
 
-    foreach (const QString& project, toutatis->projects().value())
+    QStringList args = app.arguments();
+    args.takeFirst();
+    qDebug() << args;
+
+    if (args.first() == "stop" && args.size() == 1)
     {
-        qDebug() << project;
+        toutatis->stopTracking().waitForFinished();
+        return 0;
     }
+
+    if (args.first() == "start" && args.size() >= 3)
+    {
+        if (args[1] == "--create")
+        {
+            toutatis->startTask(args[2], args[3], true).waitForFinished();
+        }
+        else
+        {
+            toutatis->startTask(args[1], args[2]).waitForFinished();
+        }
+        return 0;
+    }
+
+    printUsage();
     return 0;
 }

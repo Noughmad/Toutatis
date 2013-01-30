@@ -16,15 +16,22 @@
       <arg type="as" direction="out"/>
     </method>
     <method name="createProject">
+      <arg type="x" direction="out"/>
       <arg name="name" type="s" direction="in"/>
       <arg name="client" type="s" direction="in"/>
     </method>
     <method name="createProject">
+      <arg type="x" direction="out"/>
       <arg name="name" type="s" direction="in"/>
     </method>
     <method name="currentProjectAndTask">
       <arg type="s" direction="out"/>
       <arg name="task" type="s" direction="out"/>
+    </method>
+    <method name="startTask">
+      <arg name="project" type="s" direction="in"/>
+      <arg name="task" type="s" direction="in"/>
+      <arg name="create" type="b" direction="in"/>
     </method>
     <method name="startTask">
       <arg name="project" type="s" direction="in"/>
@@ -58,6 +65,11 @@
       <arg name="eventType" type="s" direction="in"/>
       <arg name="start" type="x" direction="in"/>
       <arg name="end" type="x" direction="in"/>
+    </method>
+    <method name="findTask">
+      <arg type="x" direction="out"/>
+      <arg name="project" type="s" direction="in"/>
+      <arg name="task" type="s" direction="in"/>
     </method>
   </interface>
 </node>

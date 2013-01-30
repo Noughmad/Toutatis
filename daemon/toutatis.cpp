@@ -101,18 +101,17 @@ QStringList Toutatis::projects() const
     return list;
 }
 
-void Toutatis::createProject(const QString& name, const QString& client)
+qlonglong Toutatis::createProject(const QString& name, const QString& client)
 {
     QSqlQuery query;
     query.prepare("INSERT INTO projects (name, client, visible) VALUES (:name, :client, :visible);");
     query.bindValue(":name", name);
     query.bindValue(":client", client);
     query.bindValue(":visible", 1);
-
-    bool ok = query.exec();
-    qDebug() << "Created project " << name << ok;
+    query.exec();
 
     emit projectChanged(name);
+    return query.lastInsertId().toLongLong();
 }
 
 QString Toutatis::currentProjectAndTask(QString& task)
@@ -121,14 +120,49 @@ QString Toutatis::currentProjectAndTask(QString& task)
     return mCurrentProject;
 }
 
-void Toutatis::startTask(const QString& project, const QString& task)
+void Toutatis::startTask(const QString& project, const QString& task, bool create)
 {
+    /*
+     * First try to update any tasks with specified project and name
+     */
     QSqlQuery query;
     query.prepare("UPDATE tasks SET active=true, lastStart=:start WHERE project=:project AND name=:name;");
     query.bindValue(":name", task);
     query.bindValue(":project", project);
     query.bindValue(":start", QDateTime::currentMSecsSinceEpoch());
     query.exec();
+
+    if (create && query.numRowsAffected() == 0)
+    {
+        QSqlQuery projectQuery;
+        projectQuery.prepare("SELECT _id FROM projects WHERE name=:name");
+        projectQuery.bindValue(":name", project);
+        projectQuery.exec();
+
+        qlonglong projectId;
+        if (projectQuery.next())
+        {
+            projectId = projectQuery.value(0).toLongLong();
+        }
+        else
+        {
+            projectId = createProject(project);
+        }
+
+        foreach (Project* p, findChildren<Project*>())
+        {
+            if (p->id() == projectId)
+            {
+                if (!p->tasks().contains(task))
+                {
+                    p->createTask(task);
+                }
+                break;
+            }
+        }
+
+        startTask(project, task, false);
+    }
 
     emit currentTaskChanged(project, task);
 }

@@ -1,0 +1,23 @@
+#!/bin/sh
+
+PROJECT=$(basename $(git rev-parse --show-toplevel))
+
+case $1 in
+    start)
+        TASK=$2
+        if [ -n "$TASK" ]; then
+            git config --local toutatis.task $TASK;
+        else
+            TASK=$(git config --local toutatis.task)
+        fi
+        if [ -z "$TASK" ]; then
+            echo "No current task set, please specify a task name"
+            echo "Usage: git time start '<task name>'"
+            exit 2
+        fi
+        toutatis start --create $PROJECT $TASK
+        ;;
+    stop)
+        toutatis stop
+        ;;
+esac

@@ -17,10 +17,10 @@ public:
 
 public slots:
     QStringList projects() const;
-    void createProject(const QString& name, const QString& client = QString());
+    qlonglong createProject(const QString& name, const QString& client = QString());
 
     QString currentProjectAndTask(QString& task);
-    void startTask(const QString& project, const QString& task);
+    void startTask(const QString& project, const QString& task, bool create = false);
     void stopTask(const QString& project, const QString& task);
     void stopTracking();
     bool isTracking();
