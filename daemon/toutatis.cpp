@@ -122,18 +122,38 @@ QString Toutatis::currentProjectAndTask(QString& task)
 
 void Toutatis::startTask(const QString& project, const QString& task, bool create)
 {
+    qDebug() << "Starting task" << project << "/" << task << create;
     /*
      * First try to update any tasks with specified project and name
      */
     QSqlQuery query;
-    query.prepare("UPDATE tasks SET active=true, lastStart=:start WHERE project=:project AND name=:name;");
+    query.prepare("UPDATE tasks SET active=true, lastStart=:start "
+            "WHERE project IN (SELECT _id FROM projects WHERE name=:project) "
+            "AND name=:name;");
     query.bindValue(":name", task);
     query.bindValue(":project", project);
     query.bindValue(":start", QDateTime::currentMSecsSinceEpoch());
     query.exec();
 
-    if (create && query.numRowsAffected() == 0)
+    /*
+     * TODO: query.numRowsAffected() always returns -1
+     * Instead, we should first try to find the task,
+     * and then create or start it
+     */
+
+    qlonglong taskId = findTask(project, task);
+    if (taskId > 0)
     {
+        QSqlQuery query;
+        query.prepare("UPDATE tasks SET active=true, lastStart=:start "
+        "WHERE _id=:id;");
+        query.bindValue(":start", QDateTime::currentMSecsSinceEpoch());
+        query.bindValue(":id", taskId);
+        query.exec();
+    }
+    else if (create)
+    {
+        qDebug() << "Task not found, creating";
         QSqlQuery projectQuery;
         projectQuery.prepare("SELECT _id FROM projects WHERE name=:name");
         projectQuery.bindValue(":name", project);

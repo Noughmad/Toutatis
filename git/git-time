@@ -1,12 +1,15 @@
 #!/bin/sh
 
-PROJECT=$(basename $(git rev-parse --show-toplevel))
+PROJECT=$(git config --local toutatis.project)
+if [ -z "$PROJECT" ]; then
+    PROJECT=$(basename $(git rev-parse --show-toplevel))
+fi
 
 case $1 in
     start)
         TASK=$2
         if [ -n "$TASK" ]; then
-            git config --local toutatis.task $TASK;
+            git config --local toutatis.task $TASK
         else
             TASK=$(git config --local toutatis.task)
         fi
@@ -19,5 +22,24 @@ case $1 in
         ;;
     stop)
         toutatis stop
+        ;;
+    set-project)
+        if [ -n "$2" ]; then
+            PROJECT="$2"
+            git config --local toutatis.project $PROJECT
+        else
+            echo "No project name specified"
+            echo "Usage: git time set-project '<project name'>"
+            exit 3
+        fi
+        ;;
+    current)
+        TOUTATIS_PROJECT=$(toutatis project current)
+        if [ "$PROJECT" == "${TOUTATIS_PROJECT}" ];
+        then
+            toutatis current
+        else
+            echo "$PROJECT is not currently being tracked"
+        fi
         ;;
 esac
