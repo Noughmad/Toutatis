@@ -1,0 +1,3 @@
+[D-BUS Service]
+Name=com.noughmad.Toutatis
+Exec=@CMAKE_INSTALL_PREFIX@/bin/toutatisd

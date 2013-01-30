@@ -186,8 +186,23 @@ void Toutatis::addEvent(const QString& project, const QString& task, const QStri
     query.exec();
 }
 
-void Toutatis::output()
+qlonglong Toutatis::findTask(const QString& project, const QString& task)
 {
+    QSqlQuery query;
+    query.prepare("SELECT _id FROM tasks WHERE name=:task AND "
+        "project IN (SELECT _id FROM projects WHERE name=:project);");
+    query.bindValue(":project", project);
+    query.bindValue(":task", task);
+    query.exec();
+
+    if (query.next())
+    {
+        return query.value(0).toLongLong();
+    }
+    else
+    {
+        return 0;
+    }
 }
 
 #include "toutatis.moc"
