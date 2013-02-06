@@ -155,5 +155,3 @@ void Task::stop()
 {
     setActive(false);
 }
-
-#include "task.moc"

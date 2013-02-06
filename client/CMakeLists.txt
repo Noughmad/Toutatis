@@ -2,6 +2,7 @@ include_directories(${QT_INCLUDES} ${CMAKE_CURRENT_SOURCE_DIR} ${CMAKE_CURRENT_B
 
 set(Toutatis_client_SRCS
     main.cpp
+    client.cpp
 )
 
 qt4_automoc(${Toutatis_client_SRCS})

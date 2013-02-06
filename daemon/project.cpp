@@ -125,5 +125,3 @@ void Project::createTask(const QString& task)
 
     new Task(query.lastInsertId().toLongLong(), this);
 }
-
-#include "project.moc"

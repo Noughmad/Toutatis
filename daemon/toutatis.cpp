@@ -258,5 +258,3 @@ qlonglong Toutatis::findTask(const QString& project, const QString& task)
         return 0;
     }
 }
-
-#include "toutatis.moc"

@@ -25,6 +25,7 @@ case $1 in
         ;;
     set-project)
         if [ -n "$2" ]; then
+            toutatis --project ${PROJECT} rename $2
             PROJECT="$2"
             git config --local toutatis.project $PROJECT
         else

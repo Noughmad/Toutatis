@@ -1,4 +1,5 @@
 #include "toutatis_interface.h"
+#include "client.h"
 
 #include <QCoreApplication>
 #include <QStringList>
@@ -32,44 +33,13 @@ void project(Toutatis* t, const QStringList& args)
 int main(int argc, char** argv)
 {
     QCoreApplication app(argc, argv);
+    Client client;
+    bool ok = client.parseArguments(app.arguments());
 
-    Toutatis* toutatis = new Toutatis(
-        "com.noughmad.Toutatis",
-        "/Toutatis",
-        QDBusConnection::sessionBus(),
-        0
-    );
-
-    QStringList args = app.arguments();
-    args.takeFirst();
-    qDebug() << args;
-
-    if (args.first() == "project")
+    if (!ok)
     {
-        args.takeFirst();
-        project(toutatis, args);
-        return 0;
+        printUsage();
     }
 
-    if (args.first() == "stop" && args.size() == 1)
-    {
-        toutatis->stopTracking().waitForFinished();
-        return 0;
-    }
-
-    if (args.first() == "start" && args.size() >= 3)
-    {
-        if (args[1] == "--create")
-        {
-            toutatis->startTask(args[2], args[3], true).waitForFinished();
-        }
-        else
-        {
-            toutatis->startTask(args[1], args[2]).waitForFinished();
-        }
-        return 0;
-    }
-
-    printUsage();
     return 0;
 }
