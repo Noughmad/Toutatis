@@ -14,18 +14,12 @@ Task::Task(qlonglong id, Project* parent)
     new TaskAdaptor(this);
 
     QDBusConnection dbus = QDBusConnection::sessionBus();
-    bool ok = dbus.registerObject(fullObjectPath(), this);
-    qDebug() << "Registered task " << name() << ok;
+    dbus.registerObject("/Task/" + QString::number(id), this);
 }
 
 Task::~Task()
 {
 
-}
-
-QString Task::fullObjectPath() const
-{
-    return qobject_cast<Project*>(parent())->fullObjectPath() + QString("/Tasks/%1").arg(mId);
 }
 
 QString Task::name() const

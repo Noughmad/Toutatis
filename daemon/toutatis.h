@@ -28,6 +28,7 @@ public slots:
     void addNote(const QString& project, const QString& task, const QString& note);
     void addEvent(const QString& project, const QString& task, const QString& eventType, qint64 start, qint64 end, const QString& message = QString());
 
+    qlonglong findProject(const QString& name);
     qlonglong findTask(const QString& project, const QString& task);
 
 signals:

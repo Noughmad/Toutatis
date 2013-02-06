@@ -10,8 +10,8 @@ set(Toutatis_daemon_SRCS
 
 qt4_automoc(${Toutatis_daemon_SRCS})
 qt4_add_dbus_adaptor(Toutatis_daemon_SRCS ../com.noughmad.Toutatis.xml toutatis.h Toutatis)
-qt4_add_dbus_adaptor(Toutatis_daemon_SRCS ../com.noughmad.Toutatis.Project.xml project.h Project)
-qt4_add_dbus_adaptor(Toutatis_daemon_SRCS ../com.noughmad.Toutatis.Task.xml task.h Task)
+qt4_add_dbus_adaptor(Toutatis_daemon_SRCS ../com.noughmad.toutatis.Project.xml project.h Project)
+qt4_add_dbus_adaptor(Toutatis_daemon_SRCS ../com.noughmad.toutatis.Task.xml task.h Task)
 dbus_add_activation_service(com.noughmad.Toutatis.service.in)
 
 add_executable(toutatisd ${Toutatis_daemon_SRCS})

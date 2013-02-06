@@ -50,7 +50,6 @@ Toutatis::Toutatis(QObject* parent) : QObject(parent)
     projects.exec("SELECT _id FROM projects");
     while (projects.next())
     {
-        qDebug() << "Creating a project with id " << projects.value(0);
         new Project(projects.value(0).toLongLong(), this);
     }
 }
@@ -238,6 +237,23 @@ void Toutatis::addEvent(const QString& project, const QString& task, const QStri
     query.bindValue(":duration", end - start);
     query.bindValue(":message", message);
     query.exec();
+}
+
+qlonglong Toutatis::findProject(const QString& name)
+{
+    QSqlQuery query;
+    query.prepare("SELECT _id FROM projects WHERE name=:name;");
+    query.bindValue(":name", name);
+    query.exec();
+
+    if (query.next())
+    {
+        return query.value(0).toLongLong();
+    }
+    else
+    {
+        return 0;
+    }
 }
 
 qlonglong Toutatis::findTask(const QString& project, const QString& task)

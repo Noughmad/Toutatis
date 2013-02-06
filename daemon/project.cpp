@@ -13,7 +13,7 @@ Project::Project(qlonglong id, QObject* parent)
     new ProjectAdaptor(this);
 
     QDBusConnection dbus = QDBusConnection::sessionBus();
-    bool ok = dbus.registerObject("/Toutatis/" + name(), this);
+    dbus.registerObject("/Project/" + QString::number(id), this);
 
     QSqlQuery tasks;
     tasks.prepare("SELECT _id FROM tasks WHERE project=:id");
@@ -21,7 +21,6 @@ Project::Project(qlonglong id, QObject* parent)
     tasks.exec();
     while (tasks.next())
     {
-        qDebug() << "Creating a task with id " << tasks.value(0);
         new Task(tasks.value(0).toLongLong(), this);
     }
 }
@@ -29,11 +28,6 @@ Project::Project(qlonglong id, QObject* parent)
 Project::~Project()
 {
 
-}
-
-QString Project::fullObjectPath() const
-{
-    return QString("/Projects/%1").arg(mId);
 }
 
 QString Project::name() const
