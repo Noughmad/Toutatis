@@ -66,6 +66,10 @@
       <arg name="start" type="x" direction="in"/>
       <arg name="end" type="x" direction="in"/>
     </method>
+    <method name="findProject">
+      <arg type="x" direction="out"/>
+      <arg name="name" type="s" direction="in"/>
+    </method>
     <method name="findTask">
       <arg type="x" direction="out"/>
       <arg name="project" type="s" direction="in"/>

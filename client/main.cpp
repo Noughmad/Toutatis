@@ -11,12 +11,18 @@ using namespace com::noughmad;
 
 void printUsage()
 {
-    cout << "Usage: toutatis (start|stop) [arguments]" << endl;
-    cout << "       toutatis <type> <command> [arguments]" << endl;
-    cout << "       toutatis --help" << endl;
-    cout << "       toutatis <type> --help" << endl;
+    cout << "Usage: toutatis [--project <project>] [--task <task>] <command> [arguments]" << endl;
     cout << endl;
-    cout << "Possible types are 'project', 'task', 'event' or 'note'";
+    cout << "Projects and tasks can be specified either by name or by id" << endl;
+    cout << endl;
+    cout << "Accepted commands and their arguments are:" << endl;
+    cout << "  start [[--create] <task name>]" << endl;
+    cout << "  stop" << endl;
+    cout << "  status" << endl;
+    cout << "  list-projects" << endl;
+    cout << "  list-tasks" << endl;
+    cout << "  remove" << endl;
+    cout << "  add-event <type> <short message> [<longer message>]" << endl;
 }
 
 int main(int argc, char** argv)

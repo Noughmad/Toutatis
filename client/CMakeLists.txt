@@ -8,8 +8,8 @@ set(Toutatis_client_SRCS
 qt4_automoc(${Toutatis_client_SRCS})
 
 qt4_add_dbus_interface(Toutatis_client_SRCS ../com.noughmad.Toutatis.xml toutatis_interface)
-qt4_add_dbus_interface(Toutatis_client_SRCS ../com.noughmad.Toutatis.Project.xml project_interface)
-qt4_add_dbus_interface(Toutatis_client_SRCS ../com.noughmad.Toutatis.Task.xml task_interface)
+qt4_add_dbus_interface(Toutatis_client_SRCS ../com.noughmad.toutatis.Project.xml project_interface)
+qt4_add_dbus_interface(Toutatis_client_SRCS ../com.noughmad.toutatis.Task.xml task_interface)
 
 add_executable(toutatis ${Toutatis_client_SRCS})
 target_link_libraries(toutatis ${QT_QTCORE_LIBRARY} ${QT_QTSQL_LIBRARY} ${QT_QTDBUS_LIBRARY})
