@@ -19,17 +19,6 @@ void printUsage()
     cout << "Possible types are 'project', 'task', 'event' or 'note'";
 }
 
-void project(Toutatis* t, const QStringList& args)
-{
-    if (args.isEmpty() || args.first() == "list")
-    {
-        foreach (const QString& name, t->projects().value())
-        {
-            cout << name.toStdString() << endl;
-        }
-    }
-}
-
 int main(int argc, char** argv)
 {
     QCoreApplication app(argc, argv);
