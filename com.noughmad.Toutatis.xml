@@ -1,20 +1,12 @@
 <!DOCTYPE node PUBLIC "-//freedesktop//DTD D-BUS Object Introspection 1.0//EN" "http://www.freedesktop.org/standards/dbus/1.0/introspect.dtd">
 <node>
   <interface name="com.noughmad.Toutatis">
-    <signal name="projectChanged">
-      <arg name="name" type="s" direction="out"/>
-    </signal>
-    <signal name="taskChanged">
-      <arg name="project" type="s" direction="out"/>
-      <arg name="task" type="s" direction="out"/>
+    <property name="currentTask" type="x" access="readwrite"/>
+    <signal name="projectsChanged">
     </signal>
     <signal name="currentTaskChanged">
-      <arg name="project" type="s" direction="out"/>
-      <arg name="task" type="s" direction="out"/>
+      <arg name="id" type="x" direction="out"/>
     </signal>
-    <method name="projects">
-      <arg type="as" direction="out"/>
-    </method>
     <method name="createProject">
       <arg type="x" direction="out"/>
       <arg name="name" type="s" direction="in"/>
@@ -24,47 +16,21 @@
       <arg type="x" direction="out"/>
       <arg name="name" type="s" direction="in"/>
     </method>
-    <method name="currentProjectAndTask">
-      <arg type="s" direction="out"/>
-      <arg name="task" type="s" direction="out"/>
+    <method name="currentTask">
+      <arg type="x" direction="out"/>
     </method>
-    <method name="startTask">
+    <method name="startTracking">
+      <arg name="task" type="x" direction="in"/>
+    </method>
+    <method name="startTracking">
       <arg name="project" type="s" direction="in"/>
       <arg name="task" type="s" direction="in"/>
       <arg name="create" type="b" direction="in"/>
-    </method>
-    <method name="startTask">
-      <arg name="project" type="s" direction="in"/>
-      <arg name="task" type="s" direction="in"/>
-    </method>
-    <method name="stopTask">
-      <arg name="project" type="s" direction="in"/>
-      <arg name="task" type="s" direction="in"/>
     </method>
     <method name="stopTracking">
     </method>
     <method name="isTracking">
       <arg type="b" direction="out"/>
-    </method>
-    <method name="addNote">
-      <arg name="project" type="s" direction="in"/>
-      <arg name="task" type="s" direction="in"/>
-      <arg name="note" type="s" direction="in"/>
-    </method>
-    <method name="addEvent">
-      <arg name="project" type="s" direction="in"/>
-      <arg name="task" type="s" direction="in"/>
-      <arg name="eventType" type="s" direction="in"/>
-      <arg name="start" type="x" direction="in"/>
-      <arg name="end" type="x" direction="in"/>
-      <arg name="message" type="s" direction="in"/>
-    </method>
-    <method name="addEvent">
-      <arg name="project" type="s" direction="in"/>
-      <arg name="task" type="s" direction="in"/>
-      <arg name="eventType" type="s" direction="in"/>
-      <arg name="start" type="x" direction="in"/>
-      <arg name="end" type="x" direction="in"/>
     </method>
     <method name="findProject">
       <arg type="x" direction="out"/>

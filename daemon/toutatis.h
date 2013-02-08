@@ -9,6 +9,8 @@ class Toutatis : public QObject
 {
     Q_OBJECT
     Q_CLASSINFO("D-Bus Interface", "com.noughmad.Toutatis")
+    Q_PROPERTY(qlonglong currentTask READ currentTask WRITE startTracking NOTIFY currentTaskChanged)
+    Q_PROPERTY(QVector<qlonglong> projects READ projects NOTIFY projectsChanged)
 
 public:
     Toutatis(QObject* parent = 0);
@@ -16,25 +18,21 @@ public:
 
 
 public slots:
-    QStringList projects() const;
+    QVector<qlonglong> projects() const;
     qlonglong createProject(const QString& name, const QString& client = QString());
 
-    QString currentProjectAndTask(QString& task);
-    void startTask(const QString& project, const QString& task, bool create = false);
-    void stopTask(const QString& project, const QString& task);
+    qlonglong currentTask() const;
+    void startTracking(qlonglong task);
+    void startTracking(const QString& project, const QString& task, bool create);
     void stopTracking();
-    bool isTracking();
-
-    void addNote(const QString& project, const QString& task, const QString& note);
-    void addEvent(const QString& project, const QString& task, const QString& eventType, qint64 start, qint64 end, const QString& message = QString());
+    bool isTracking() const;
 
     qlonglong findProject(const QString& name);
     qlonglong findTask(const QString& project, const QString& task);
 
 signals:
-    void projectChanged(const QString& name);
-    void taskChanged(const QString& project, const QString& task);
-    void currentTaskChanged(const QString& project, const QString& task);
+    void projectsChanged();
+    void currentTaskChanged(qlonglong id);
 
 private:
     void output();
@@ -42,8 +40,7 @@ private:
 private:
     QSqlDatabase mDatabase;
 
-    QString mCurrentProject;
-    QString mCurrentTask;
+    qlonglong mCurrentTask;
 
     void createTables();
 };

@@ -4,6 +4,7 @@
 #include <QObject>
 #include <QStringList>
 #include <QDateTime>
+#include <QVector>
 
 class Project;
 class Task : public QObject
@@ -14,6 +15,8 @@ class Task : public QObject
     Q_PROPERTY(QString status READ status WRITE setStatus NOTIFY statusChanged)
     Q_PROPERTY(bool active READ isActive WRITE setActive NOTIFY activeChanged)
     Q_PROPERTY(QDateTime lastStart READ lastStart WRITE setLastStart)
+    Q_PROPERTY(QStringList notes READ notes NOTIFY notesChanged)
+    Q_PROPERTY(QVector<qlonglong> events READ events NOTIFY eventsChanged)
 
 public:
     explicit Task(qlonglong id, Project* parent = 0);
@@ -35,19 +38,25 @@ public:
 
     qlonglong id() const;
 
-    QString fullObjectPath() const;
-
+    QStringList notes() const;
+    QVector<qlonglong> events() const;
 
 public slots:
+    qlonglong addNote(const QString& title, const QString& contents);
+    void removeNote(const QString& title);
+    void addEvent(const QString& eventType, qlonglong start, qlonglong end, const QString& title, const QString& message = QString());
     void remove();
 
     void start();
     void stop();
 
 signals:
+    void removed();
     void nameChanged(const QString& name);
     void statusChanged(const QString& status);
     void activeChanged(bool active);
+    void notesChanged();
+    void eventsChanged();
 
 private:
     qlonglong mId;

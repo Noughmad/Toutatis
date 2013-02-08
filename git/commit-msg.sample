@@ -1,0 +1,18 @@
+#!/bin/sh
+
+# Called by "git commit" with one argument, the name of the file
+# that has the commit message.
+
+
+PROJECT=$(git config --local toutatis.project)
+if [ -z "$PROJECT" ]; then
+    PROJECT=$(basename $(git rev-parse --show-toplevel))
+fi
+
+SHORT_MSG=$(head -n 1 $1)
+LONG_MSG=""
+if [ $(wc -l $1) -gt 1 ]; then
+    LONG_MSG=$(tail -n +2)
+fi
+
+toutatis --project ${PROJECT} add-event ${SHORT_MSG} ${LONG_MSG}

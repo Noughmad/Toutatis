@@ -7,6 +7,9 @@
     <property name="lastStart" type="((iii)(iiii)i)" access="readwrite">
       <annotation name="org.qtproject.QtDBus.QtTypeName" value="QDateTime"/>
     </property>
+    <property name="notes" type="as" access="read"/>
+    <signal name="removed">
+    </signal>
     <signal name="nameChanged">
       <arg name="name" type="s" direction="out"/>
     </signal>
@@ -16,7 +19,36 @@
     <signal name="activeChanged">
       <arg name="active" type="b" direction="out"/>
     </signal>
+    <signal name="notesChanged">
+    </signal>
+    <signal name="eventsChanged">
+    </signal>
+    <method name="addNote">
+      <arg type="x" direction="out"/>
+      <arg name="title" type="s" direction="in"/>
+      <arg name="contents" type="s" direction="in"/>
+    </method>
+    <method name="removeNote">
+      <arg name="title" type="s" direction="in"/>
+    </method>
+    <method name="addEvent">
+      <arg name="eventType" type="s" direction="in"/>
+      <arg name="start" type="x" direction="in"/>
+      <arg name="end" type="x" direction="in"/>
+      <arg name="title" type="s" direction="in"/>
+      <arg name="message" type="s" direction="in"/>
+    </method>
+    <method name="addEvent">
+      <arg name="eventType" type="s" direction="in"/>
+      <arg name="start" type="x" direction="in"/>
+      <arg name="end" type="x" direction="in"/>
+      <arg name="title" type="s" direction="in"/>
+    </method>
     <method name="remove">
+    </method>
+    <method name="start">
+    </method>
+    <method name="stop">
     </method>
   </interface>
 </node>

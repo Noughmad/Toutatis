@@ -94,22 +94,22 @@ void Project::remove()
 }
 
 
-QStringList Project::tasks()
+QVector< qlonglong > Project::tasks() const
 {
     QSqlQuery query;
     query.prepare("SELECT name FROM tasks WHERE project = :id;");
     query.bindValue(":id", mId);
     query.exec();
 
-    QStringList list;
+    QVector<qlonglong> list;
     while(query.next())
     {
-        list << query.value(0).toString();
+        list << query.value(0).toLongLong();
     }
     return list;
 }
 
-void Project::createTask(const QString& task)
+qlonglong Project::createTask(const QString& task)
 {
     QSqlQuery query;
     query.prepare("INSERT INTO tasks (name, project) VALUES (:name, :id);");
@@ -117,5 +117,25 @@ void Project::createTask(const QString& task)
     query.bindValue(":id", mId);
     query.exec();
 
-    new Task(query.lastInsertId().toLongLong(), this);
+    qlonglong id = query.lastInsertId().toLongLong();
+    new Task(id, this);
+
+    emit tasksChanged();
+    return id;
+}
+
+qlonglong Project::findTask(const QString& task)
+{
+    QSqlQuery query;
+    query.prepare("SELECT _id FROM tasks WHERE project=:project AND name=:name");
+    query.bindValue(":project", mId);
+    query.bindValue(":name", task);
+    query.exec();
+
+    if (query.next())
+    {
+        return query.value(0).toLongLong();
+    }
+
+    return 0;
 }
