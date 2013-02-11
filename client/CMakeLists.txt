@@ -1,6 +1,6 @@
 include_directories(${QT_INCLUDES} ${CMAKE_CURRENT_SOURCE_DIR} ${CMAKE_CURRENT_BINARY_DIR})
 
-set(Toutatis_client_SRCS
+set(Toutatis_client_SRCS tasktreemodel.cpp
     main.cpp
     client.cpp
 )
