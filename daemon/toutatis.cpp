@@ -73,13 +73,13 @@ void Toutatis::createTables()
 {
     QSqlQuery query;
     query.exec("CREATE TABLE projects "
-        "(_id INTEGER PRIMARY KEY, "
+        "(_id TEXT PRIMARY KEY, "
         "name TEXT, "
         "client TEXT, "
         "visible INTEGER DEFAULT 1);");
 
     query.exec("CREATE TABLE tasks "
-        "(_id INTEGER PRIMARY KEY, "
+        "(_id TEXT PRIMARY KEY, "
         "project INTEGER REFERENCES projects(_id), "
         "name TEXT, "
         "active INTEGER DEFAULT 0, "
@@ -87,7 +87,7 @@ void Toutatis::createTables()
         "status INTEGER DEFAULT 1);");
 
     query.exec("CREATE TABLE events "
-        "(_id INTEGER PRIMARY KEY, "
+        "(_id TEXT PRIMARY KEY, "
         "task INTEGER REFERENCES tasks(_id), "
         "start INTEGER, "
         "end INTEGER, "
@@ -95,7 +95,7 @@ void Toutatis::createTables()
         "message TEXT);");
 
     query.exec("CREATE TABLE notes "
-        "(_id INTEGER PRIMARY KEY, "
+        "(_id TEXT PRIMARY KEY, "
         "task INTEGER REFERENCES tasks(_id), "
         "title TEXT, "
         "content TEXT);");
@@ -113,15 +113,15 @@ QStringList Toutatis::projects() const
 QString Toutatis::createProject(const QString& name, const QString& client)
 {
     QSqlQuery query;
-    query.prepare("INSERT INTO projects (name, client, visible) VALUES (:name, :client, :visible);");
+    QString id = QUuid::createUuid().toString();
+    query.prepare("INSERT INTO projects (_id, name, client, visible) VALUES (:id, :name, :client, :visible);");
+    query.bindValue(":id", id);
     query.bindValue(":name", name);
     query.bindValue(":client", client);
     query.bindValue(":visible", 1);
     query.exec();
 
-    QString id = query.lastInsertId().toString();
     new Project(id, this);
-
     emit projectsChanged();
     return id;
 }

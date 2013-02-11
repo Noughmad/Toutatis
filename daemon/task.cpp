@@ -151,10 +151,12 @@ void Task::stop()
     setActive(false);
 }
 
-void Task::addEvent(const QString& eventType, qlonglong start, qlonglong end, const QString& title, const QString& message)
+QString Task::addEvent(const QString& eventType, qlonglong start, qlonglong end, const QString& title, const QString& message)
 {
     QSqlQuery query;
-    query.prepare("INSERT INTO events (task, type, start, end, duration, title, message) VALUES (:task, :type, :start, :end, :duration, :message);");
+    QString id = QUuid::createUuid().toString();
+    query.prepare("INSERT INTO events (_id, task, type, start, end, duration, title, message) VALUES (:id, :task, :type, :start, :end, :duration, :message);");
+    query.bindValue(":id", id);
     query.bindValue(":task", mId);
     query.bindValue(":type", eventType);
     query.bindValue(":start", start);
@@ -164,6 +166,7 @@ void Task::addEvent(const QString& eventType, qlonglong start, qlonglong end, co
     query.exec();
 
     emit eventsChanged();
+    return id;
 }
 
 QStringList Task::events() const
@@ -179,14 +182,16 @@ QStringList Task::events() const
 QString Task::addNote(const QString& title, const QString& contents)
 {
     QSqlQuery query;
-    query.prepare("INSERT INTO notes (task, title, contents) VALUES (:task, :title, :contents);");
+    QString id = QUuid::createUuid().toString();
+    query.prepare("INSERT INTO notes (_id, task, title, contents) VALUES (:id, :task, :title, :contents);");
+    query.bindValue(":id", id);
     query.bindValue(":task", mId);
     query.bindValue(":title", title);
     query.bindValue(":contents", contents);
     query.exec();
 
     emit notesChanged();
-    return query.lastInsertId().toString();
+    return id;
 }
 
 QStringList Task::notes() const

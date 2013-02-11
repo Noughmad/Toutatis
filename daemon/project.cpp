@@ -108,14 +108,14 @@ QStringList Project::tasks() const
 QString Project::createTask(const QString& task)
 {
     QSqlQuery query;
-    query.prepare("INSERT INTO tasks (name, project) VALUES (:name, :id);");
+    QString id = QUuid::createUuid().toString();
+    query.prepare("INSERT INTO tasks (_id, name, project) VALUES (:id, :name, :project);");
+    query.bindValue(":id", id);
     query.bindValue(":name", task);
-    query.bindValue(":id", mId);
+    query.bindValue(":project", mId);
     query.exec();
 
-    QString id = query.lastInsertId().toString();
     new Task(id, this);
-
     emit tasksChanged();
     return id;
 }

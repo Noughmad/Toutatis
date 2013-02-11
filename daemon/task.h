@@ -44,7 +44,7 @@ public:
 public slots:
     QString addNote(const QString& title, const QString& contents);
     void removeNote(const QString& title);
-    void addEvent(const QString& eventType, qlonglong start, qlonglong end, const QString& title, const QString& message = QString());
+    QString addEvent(const QString& eventType, qlonglong start, qlonglong end, const QString& title, const QString& message = QString());
     void remove();
 
     void start();

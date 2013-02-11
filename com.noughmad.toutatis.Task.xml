@@ -33,6 +33,7 @@
       <arg name="title" type="s" direction="in"/>
     </method>
     <method name="addEvent">
+      <arg type="s" direction="out"/>
       <arg name="eventType" type="s" direction="in"/>
       <arg name="start" type="x" direction="in"/>
       <arg name="end" type="x" direction="in"/>
@@ -40,6 +41,7 @@
       <arg name="message" type="s" direction="in"/>
     </method>
     <method name="addEvent">
+      <arg type="s" direction="out"/>
       <arg name="eventType" type="s" direction="in"/>
       <arg name="start" type="x" direction="in"/>
       <arg name="end" type="x" direction="in"/>
