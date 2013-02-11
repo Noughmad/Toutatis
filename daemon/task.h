@@ -16,10 +16,10 @@ class Task : public QObject
     Q_PROPERTY(bool active READ isActive WRITE setActive NOTIFY activeChanged)
     Q_PROPERTY(QDateTime lastStart READ lastStart WRITE setLastStart)
     Q_PROPERTY(QStringList notes READ notes NOTIFY notesChanged)
-    Q_PROPERTY(QVector<qlonglong> events READ events NOTIFY eventsChanged)
+    Q_PROPERTY(QStringList events READ events NOTIFY eventsChanged)
 
 public:
-    explicit Task(qlonglong id, Project* parent = 0);
+    explicit Task(const QString& id, Project* parent = 0);
     virtual ~Task();
 
     QString name() const;
@@ -36,13 +36,13 @@ public:
 
     qlonglong duration() const;
 
-    qlonglong id() const;
+    QString id() const;
 
     QStringList notes() const;
-    QVector<qlonglong> events() const;
+    QStringList events() const;
 
 public slots:
-    qlonglong addNote(const QString& title, const QString& contents);
+    QString addNote(const QString& title, const QString& contents);
     void removeNote(const QString& title);
     void addEvent(const QString& eventType, qlonglong start, qlonglong end, const QString& title, const QString& message = QString());
     void remove();
@@ -59,7 +59,7 @@ signals:
     void eventsChanged();
 
 private:
-    qlonglong mId;
+    QString mId;
 };
 
 #endif // TASK_H

@@ -2,19 +2,20 @@
 #include "taskadaptor.h"
 #include "project.h"
 #include "toutatis.h"
+#include "utils.h"
 
 #include <QSqlQuery>
 #include <QVariant>
 #include <QDBusConnection>
 
-Task::Task(qlonglong id, Project* parent)
+Task::Task(const QString& id, Project* parent)
 : QObject(parent)
 , mId(id)
 {
     new TaskAdaptor(this);
 
     QDBusConnection dbus = QDBusConnection::sessionBus();
-    dbus.registerObject("/Task/" + QString::number(id), this);
+    dbus.registerObject("/Task/" + id, this);
 }
 
 Task::~Task()
@@ -165,23 +166,17 @@ void Task::addEvent(const QString& eventType, qlonglong start, qlonglong end, co
     emit eventsChanged();
 }
 
-QVector< qlonglong > Task::events() const
+QStringList Task::events() const
 {
     QSqlQuery query;
     query.prepare("SELECT _id FROM events WHERE task=:task;");
     query.bindValue(":task", mId);
     query.exec();
 
-    QVector<qlonglong> list;
-    while (query.next())
-    {
-        list << query.value(0).toLongLong();
-    }
-
-    return list;
+    return Utils::stringList(query);
 }
 
-qlonglong Task::addNote(const QString& title, const QString& contents)
+QString Task::addNote(const QString& title, const QString& contents)
 {
     QSqlQuery query;
     query.prepare("INSERT INTO notes (task, title, contents) VALUES (:task, :title, :contents);");
@@ -191,7 +186,7 @@ qlonglong Task::addNote(const QString& title, const QString& contents)
     query.exec();
 
     emit notesChanged();
-    return query.lastInsertId().toLongLong();
+    return query.lastInsertId().toString();
 }
 
 QStringList Task::notes() const
@@ -215,7 +210,7 @@ void Task::removeNote(const QString& title)
 
 }
 
-qlonglong Task::id() const
+QString Task::id() const
 {
     return mId;
 }

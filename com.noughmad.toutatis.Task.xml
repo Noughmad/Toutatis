@@ -8,6 +8,7 @@
       <annotation name="org.qtproject.QtDBus.QtTypeName" value="QDateTime"/>
     </property>
     <property name="notes" type="as" access="read"/>
+    <property name="events" type="as" access="read"/>
     <signal name="removed">
     </signal>
     <signal name="nameChanged">
@@ -24,7 +25,7 @@
     <signal name="eventsChanged">
     </signal>
     <method name="addNote">
-      <arg type="x" direction="out"/>
+      <arg type="s" direction="out"/>
       <arg name="title" type="s" direction="in"/>
       <arg name="contents" type="s" direction="in"/>
     </method>

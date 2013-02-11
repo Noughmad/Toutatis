@@ -3,6 +3,7 @@
   <interface name="com.noughmad.toutatis.Project">
     <property name="name" type="s" access="readwrite"/>
     <property name="client" type="s" access="readwrite"/>
+    <property name="tasks" type="as" access="read"/>
     <signal name="tasksChanged">
     </signal>
     <signal name="removed">
@@ -14,13 +15,13 @@
       <arg name="name" type="s" direction="out"/>
     </signal>
     <method name="createTask">
-      <arg type="x" direction="out"/>
+      <arg type="s" direction="out"/>
       <arg name="task" type="s" direction="in"/>
     </method>
     <method name="remove">
     </method>
     <method name="findTask">
-      <arg type="x" direction="out"/>
+      <arg type="s" direction="out"/>
       <arg name="task" type="s" direction="in"/>
     </method>
   </interface>

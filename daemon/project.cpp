@@ -1,19 +1,20 @@
 #include "project.h"
 #include "projectadaptor.h"
 #include "task.h"
+#include "utils.h"
 
 #include <QSqlQuery>
 #include <QVariant>
 #include <QDBusConnection>
 
-Project::Project(qlonglong id, QObject* parent)
+Project::Project(const QString& id, QObject* parent)
 : QObject(parent)
 , mId(id)
 {
     new ProjectAdaptor(this);
 
     QDBusConnection dbus = QDBusConnection::sessionBus();
-    dbus.registerObject("/Project/" + QString::number(id), this);
+    dbus.registerObject("/Project/" + id, this);
 
     QSqlQuery tasks;
     tasks.prepare("SELECT _id FROM tasks WHERE project=:id");
@@ -21,7 +22,7 @@ Project::Project(qlonglong id, QObject* parent)
     tasks.exec();
     while (tasks.next())
     {
-        new Task(tasks.value(0).toLongLong(), this);
+        new Task(tasks.value(0).toString(), this);
     }
 }
 
@@ -78,7 +79,7 @@ void Project::setClient(const QString& client)
     query.exec();
 }
 
-qlonglong Project::id() const
+QString Project::id() const
 {
     return mId;
 }
@@ -94,22 +95,17 @@ void Project::remove()
 }
 
 
-QVector< qlonglong > Project::tasks() const
+QStringList Project::tasks() const
 {
     QSqlQuery query;
     query.prepare("SELECT name FROM tasks WHERE project = :id;");
     query.bindValue(":id", mId);
     query.exec();
 
-    QVector<qlonglong> list;
-    while(query.next())
-    {
-        list << query.value(0).toLongLong();
-    }
-    return list;
+    return Utils::stringList(query);
 }
 
-qlonglong Project::createTask(const QString& task)
+QString Project::createTask(const QString& task)
 {
     QSqlQuery query;
     query.prepare("INSERT INTO tasks (name, project) VALUES (:name, :id);");
@@ -117,14 +113,14 @@ qlonglong Project::createTask(const QString& task)
     query.bindValue(":id", mId);
     query.exec();
 
-    qlonglong id = query.lastInsertId().toLongLong();
+    QString id = query.lastInsertId().toString();
     new Task(id, this);
 
     emit tasksChanged();
     return id;
 }
 
-qlonglong Project::findTask(const QString& task)
+QString Project::findTask(const QString& task)
 {
     QSqlQuery query;
     query.prepare("SELECT _id FROM tasks WHERE project=:project AND name=:name");
@@ -134,8 +130,8 @@ qlonglong Project::findTask(const QString& task)
 
     if (query.next())
     {
-        return query.value(0).toLongLong();
+        return query.value(0).toString();
     }
 
-    return 0;
+    return QString();
 }

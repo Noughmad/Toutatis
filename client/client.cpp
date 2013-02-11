@@ -98,12 +98,12 @@ ComNoughmadToutatisProjectInterface* Client::getProject(const QString& name)
         return project;
     }
 
-    qlonglong id = mDaemon->findProject(name).value();
-    if (id > 0)
+    QString id = mDaemon->findProject(name).value();
+    if (!id.isEmpty())
     {
         project = new Project(
             "com.noughmad.Toutatis",
-            "/Project/" + QString::number(id),
+            "/Project/" + id,
             QDBusConnection::sessionBus(),
             this);
 
@@ -136,12 +136,12 @@ ComNoughmadToutatisTaskInterface* Client::getTask(const QString& name, const QSt
         return 0;
     }
 
-    qlonglong id = mDaemon->findTask(project, name).value();
-    if (id > 0)
+    QString id = mDaemon->findTask(project, name).value();
+    if (!id.isEmpty())
     {
         task = new Task(
             "com.noughmad.Toutatis",
-            "/Task/" + QString::number(id),
+            "/Task/" + id,
             QDBusConnection::sessionBus(),
             this);
 

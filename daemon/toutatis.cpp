@@ -2,6 +2,7 @@
 #include "toutatisadaptor.h"
 #include "project.h"
 #include "task.h"
+#include "utils.h"
 
 #include <QSqlDatabase>
 #include <QSqlQuery>
@@ -51,14 +52,14 @@ Toutatis::Toutatis(QObject* parent) : QObject(parent)
     projects.exec("SELECT _id FROM projects");
     while (projects.next())
     {
-        new Project(projects.value(0).toLongLong(), this);
+        new Project(projects.value(0).toString(), this);
     }
 
     QSqlQuery currentTask;
     currentTask.exec("SELECT _id FROM tasks WHERE active=true;");
     if (currentTask.next())
     {
-        mCurrentTask = currentTask.value(0).toLongLong();
+        mCurrentTask = currentTask.value(0).toString();
     }
 }
 
@@ -100,21 +101,16 @@ void Toutatis::createTables()
         "content TEXT);");
 }
 
-QVector< qlonglong > Toutatis::projects() const
+QStringList Toutatis::projects() const
 {
     QSqlQuery query;
     query.prepare("SELECT _id FROM projects WHERE visible = 1;");
     query.exec();
 
-    QVector<qlonglong> list;
-    while(query.next())
-    {
-        list << query.value(0).toLongLong();
-    }
-    return list;
+    return Utils::stringList(query);
 }
 
-qlonglong Toutatis::createProject(const QString& name, const QString& client)
+QString Toutatis::createProject(const QString& name, const QString& client)
 {
     QSqlQuery query;
     query.prepare("INSERT INTO projects (name, client, visible) VALUES (:name, :client, :visible);");
@@ -123,55 +119,55 @@ qlonglong Toutatis::createProject(const QString& name, const QString& client)
     query.bindValue(":visible", 1);
     query.exec();
 
-    qlonglong id = query.lastInsertId().toLongLong();
+    QString id = query.lastInsertId().toString();
     new Project(id, this);
 
     emit projectsChanged();
     return id;
 }
 
-qlonglong Toutatis::currentTask() const
+QString Toutatis::currentTask() const
 {
     return mCurrentTask;
 }
 
-void Toutatis::startTracking(qlonglong task)
+void Toutatis::startTracking(const QString& id)
 {
     stopTracking();
 
     QSqlQuery query;
     query.prepare("UPDATE tasks SET active=true, lastStart=:start "
     "WHERE _id=:id;");
-    query.bindValue(":id", task);
+    query.bindValue(":id", id);
     query.bindValue(":start", QDateTime::currentMSecsSinceEpoch());
     query.exec();
 
     if (query.numRowsAffected() > 0)
     {
-        mCurrentTask = task;
-        emit currentTaskChanged(task);
+        mCurrentTask = id;
+        emit currentTaskChanged(id);
     }
 }
 
 void Toutatis::startTracking(const QString& project, const QString& task, bool create)
 {
-    qlonglong id = findTask(project, task);
+    QString id = findTask(project, task);
 
-    if (id)
+    if (!id.isEmpty())
     {
         startTracking(id);
     }
     else if (create)
     {
-        qlonglong projectId = findProject(project);
-        if (!projectId)
+        QString projectId = findProject(project);
+        if (projectId.isEmpty())
         {
             projectId = createProject(project);
         }
 
         Project p(projectId);
         id = p.findTask(task);
-        if (!id)
+        if (id.isEmpty())
         {
             id = p.createTask(task);
         }
@@ -182,12 +178,12 @@ void Toutatis::startTracking(const QString& project, const QString& task, bool c
 
 bool Toutatis::isTracking() const
 {
-    return mCurrentTask > 0;
+    return !mCurrentTask.isEmpty();
 }
 
 void Toutatis::stopTracking()
 {
-    if (!mCurrentTask)
+    if (!isTracking())
     {
         return;
     }
@@ -208,10 +204,10 @@ void Toutatis::stopTracking()
     query.prepare("UPDATE tasks SET active=false, lastStart=0 WHERE active=true;");
     query.exec();
 
-    emit currentTaskChanged(0);
+    emit currentTaskChanged(QString());
 }
 
-qlonglong Toutatis::findProject(const QString& name)
+QString Toutatis::findProject(const QString& name)
 {
     QSqlQuery query;
     query.prepare("SELECT _id FROM projects WHERE name=:name;");
@@ -220,15 +216,15 @@ qlonglong Toutatis::findProject(const QString& name)
 
     if (query.next())
     {
-        return query.value(0).toLongLong();
+        return query.value(0).toString();
     }
     else
     {
-        return 0;
+        return QString();
     }
 }
 
-qlonglong Toutatis::findTask(const QString& project, const QString& task)
+QString Toutatis::findTask(const QString& project, const QString& task)
 {
     QSqlQuery query;
     query.prepare("SELECT _id FROM tasks WHERE name=:task AND "
@@ -239,10 +235,10 @@ qlonglong Toutatis::findTask(const QString& project, const QString& task)
 
     if (query.next())
     {
-        return query.value(0).toLongLong();
+        return query.value(0).toString();
     }
     else
     {
-        return 0;
+        return QString();
     }
 }
