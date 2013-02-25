@@ -2,6 +2,7 @@ include_directories(${QT_INCLUDES} ${CMAKE_CURRENT_SOURCE_DIR} ${CMAKE_CURRENT_B
 
 set(Toutatis_daemon_SRCS
     utils.cpp
+    model.cpp
     task.cpp
     project.cpp
     toutatis.cpp
