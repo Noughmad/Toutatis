@@ -57,6 +57,13 @@ signals:
     void typeChanged(const QString& type);
     void messageChanged(const QString& message);
     void timeChanged();
+
+#ifdef DBUS_CPP_2_XML
+public slots:
+    void remove();
+signals:
+    void removed();
+#endif
 };
 
 #endif // EVENT_H

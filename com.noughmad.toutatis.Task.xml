@@ -27,10 +27,6 @@
     </signal>
     <signal name="eventsChanged">
     </signal>
-    <signal name="removed">
-    </signal>
-    <method name="remove">
-    </method>
     <method name="addNote">
       <arg type="s" direction="out"/>
       <arg name="title" type="s" direction="in"/>

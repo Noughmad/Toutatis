@@ -1,6 +1,7 @@
 <!DOCTYPE node PUBLIC "-//freedesktop//DTD D-BUS Object Introspection 1.0//EN" "http://www.freedesktop.org/standards/dbus/1.0/introspect.dtd">
 <node>
   <interface name="com.noughmad.toutatis.Event">
+    <property name="task" type="s" access="readwrite"/>
     <property name="type" type="s" access="readwrite"/>
     <property name="message" type="s" access="readwrite"/>
     <property name="start" type="((iii)(iiii)i)" access="readwrite">
@@ -10,6 +11,9 @@
       <annotation name="org.qtproject.QtDBus.QtTypeName" value="QDateTime"/>
     </property>
     <property name="duration" type="x" access="read"/>
+    <signal name="taskChanged">
+      <arg name="task" type="s" direction="out"/>
+    </signal>
     <signal name="typeChanged">
       <arg name="type" type="s" direction="out"/>
     </signal>
@@ -18,9 +22,5 @@
     </signal>
     <signal name="timeChanged">
     </signal>
-    <signal name="removed">
-    </signal>
-    <method name="remove">
-    </method>
   </interface>
 </node>

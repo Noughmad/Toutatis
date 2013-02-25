@@ -13,9 +13,5 @@
     <signal name="contentChanged">
       <arg name="content" type="s" direction="out"/>
     </signal>
-    <signal name="removed">
-    </signal>
-    <method name="remove">
-    </method>
   </interface>
 </node>

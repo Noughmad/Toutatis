@@ -38,24 +38,17 @@ Project::~Project()
     qDebug() << "Deleting project" << id();
 }
 
-QString Project::name() const
+T_DEF_STRING_FIELD(Project, name, Name)
+T_DEF_STRING_FIELD(Project, client, Client)
+
+bool Project::isVisible() const
 {
-    return getField("name").toString();
+    return getField("visible").toBool();
 }
 
-void Project::setName(const QString& name)
+void Project::setVisible(bool visible)
 {
-    saveField("name", name);
-}
-
-QString Project::client() const
-{
-    return getField("client").toString();
-}
-
-void Project::setClient(const QString& client)
-{
-    saveField("client", client);
+    saveField("visible", visible);
 }
 
 QStringList Project::tasks() const

@@ -58,6 +58,13 @@ signals:
     void activeChanged(bool active);
     void notesChanged();
     void eventsChanged();
+
+#ifdef DBUS_CPP_2_XML
+public slots:
+    void remove();
+signals:
+    void removed();
+#endif
 };
 
 #endif // TASK_H

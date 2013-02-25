@@ -4,9 +4,8 @@
     <property name="name" type="s" access="readwrite"/>
     <property name="client" type="s" access="readwrite"/>
     <property name="tasks" type="as" access="read"/>
+    <property name="visible" type="b" access="readwrite"/>
     <signal name="tasksChanged">
-    </signal>
-    <signal name="removed">
     </signal>
     <signal name="nameChanged">
       <arg name="name" type="s" direction="out"/>
@@ -14,11 +13,12 @@
     <signal name="clientChanged">
       <arg name="name" type="s" direction="out"/>
     </signal>
+    <signal name="visibleChanged">
+      <arg name="visible" type="b" direction="out"/>
+    </signal>
     <method name="createTask">
       <arg type="s" direction="out"/>
       <arg name="task" type="s" direction="in"/>
-    </method>
-    <method name="remove">
     </method>
     <method name="findTask">
       <arg type="s" direction="out"/>
