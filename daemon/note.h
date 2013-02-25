@@ -47,13 +47,6 @@ signals:
     void taskChanged(const QString& task);
     void titleChanged(const QString& title);
     void contentChanged(const QString& content);
-
-#ifdef DBUS_CPP_2_XML
-public slots:
-    void remove();
-signals:
-    void removed();
-#endif
 };
 
 #endif // NOTE_H

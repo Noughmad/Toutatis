@@ -46,7 +46,7 @@ public:
 
 public slots:
     QString addNote(const QString& title, const QString& contents);
-    QString addEvent(const QString& eventType, const QDateTime& start, const QDateTime& end, const QString& message = QString());
+    QString addEvent(const QString& eventType, const QDateTime& start, const QDateTime& end = QDateTime(), const QString& message = QString());
 
     void start();
     void stop();
@@ -58,13 +58,6 @@ signals:
     void activeChanged(bool active);
     void notesChanged();
     void eventsChanged();
-
-#ifdef DBUS_CPP_2_XML
-public slots:
-    void remove();
-signals:
-    void removed();
-#endif
 };
 
 #endif // TASK_H

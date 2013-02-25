@@ -38,13 +38,6 @@ signals:
     void nameChanged(const QString& name);
     void clientChanged(const QString& name);
     void visibleChanged(bool visible);
-
-#ifdef DBUS_CPP_2_XML
-public slots:
-    void remove();
-signals:
-    void removed();
-#endif
 };
 
 #endif // PROJECT_H

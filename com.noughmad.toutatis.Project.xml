@@ -1,3 +1,4 @@
+<?xml version="1.0"?>
 <!DOCTYPE node PUBLIC "-//freedesktop//DTD D-BUS Object Introspection 1.0//EN" "http://www.freedesktop.org/standards/dbus/1.0/introspect.dtd">
 <node>
   <interface name="com.noughmad.toutatis.Project">
@@ -24,5 +25,7 @@
       <arg type="s" direction="out"/>
       <arg name="task" type="s" direction="in"/>
     </method>
+    <signal name="removed"/>
+    <method name="remove"/>
   </interface>
 </node>

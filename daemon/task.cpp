@@ -98,7 +98,14 @@ QString Task::addEvent(const QString& eventType, const QDateTime& start, const Q
     Event* e = new Event(this);
     e->setType(eventType);
     e->setStart(start);
-    e->setEnd(end);
+    if (end.isValid())
+    {
+        e->setEnd(end);
+    }
+    else
+    {
+        e->setEnd(start);
+    }
     e->setMessage(message);
 
     emit eventsChanged();
