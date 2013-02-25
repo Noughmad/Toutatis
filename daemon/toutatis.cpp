@@ -41,18 +41,16 @@ Toutatis::Toutatis(QObject* parent) : QObject(parent)
         qDebug() << "Found existing database in " << mDatabase.databaseName();
     }
 
-    Q_ASSERT(mDatabase.tables().size() == 3);
+    Q_ASSERT(mDatabase.tables().size() == 4);
 
     new ToutatisAdaptor(this);
     QDBusConnection dbus = QDBusConnection::sessionBus();
     dbus.registerObject("/Toutatis", this);
     dbus.registerService("com.noughmad.Toutatis");
 
-    QSqlQuery projects;
-    projects.exec("SELECT _id FROM projects");
-    while (projects.next())
+    foreach (const QString& projectId, projects())
     {
-        new Project(projects.value(0).toString(), this);
+        new Project(projectId, this);
     }
 
     QSqlQuery currentTask;
@@ -61,6 +59,7 @@ Toutatis::Toutatis(QObject* parent) : QObject(parent)
     {
         mCurrentTask = currentTask.value(0).toString();
     }
+    emit currentTaskChanged(mCurrentTask);
 }
 
 Toutatis::~Toutatis()
@@ -112,18 +111,12 @@ QStringList Toutatis::projects() const
 
 QString Toutatis::createProject(const QString& name, const QString& client)
 {
-    QSqlQuery query;
-    QString id = QUuid::createUuid().toString();
-    query.prepare("INSERT INTO projects (_id, name, client, visible) VALUES (:id, :name, :client, :visible);");
-    query.bindValue(":id", id);
-    query.bindValue(":name", name);
-    query.bindValue(":client", client);
-    query.bindValue(":visible", 1);
-    query.exec();
+    Project* project = new Project(this);
+    project->setName(name);
+    project->setClient(client);
 
-    new Project(id, this);
     emit projectsChanged();
-    return id;
+    return project->id();
 }
 
 QString Toutatis::currentTask() const
@@ -165,11 +158,11 @@ void Toutatis::startTracking(const QString& project, const QString& task, bool c
             projectId = createProject(project);
         }
 
-        Project p(projectId);
-        id = p.findTask(task);
+        Project* p = Model::findObject<Project>(projectId);
+        id = p->findTask(task);
         if (id.isEmpty())
         {
-            id = p.createTask(task);
+            id = p->createTask(task);
         }
 
         startTracking(id);
@@ -197,13 +190,15 @@ void Toutatis::stopTracking()
         start = select.value(0).toLongLong();
     }
 
-    Task task(mCurrentTask);
-    task.addEvent("TimeTracking", start, QDateTime::currentMSecsSinceEpoch(), QDateTime::currentDateTime().toString());
+    Task* task = Model::findObject<Task>(mCurrentTask);
+    Q_ASSERT(task);
+    task->addEvent("TimeTracking", start, QDateTime::currentMSecsSinceEpoch(), QDateTime::currentDateTime().toString());
 
     QSqlQuery query;
     query.prepare("UPDATE tasks SET active=false, lastStart=0 WHERE active=true;");
     query.exec();
 
+    mCurrentTask = QString();
     emit currentTaskChanged(QString());
 }
 

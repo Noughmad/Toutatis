@@ -6,11 +6,14 @@
 #include <QDateTime>
 #include <QVector>
 
+#include "model.h"
+
 class Project;
-class Task : public QObject
+class Task : public Model
 {
     Q_OBJECT
     Q_CLASSINFO("D-Bus Interface", "com.noughmad.toutatis.Task")
+    Q_PROPERTY(QString project READ project WRITE setProject NOTIFY projectChanged)
     Q_PROPERTY(QString name READ name WRITE setName NOTIFY nameChanged)
     Q_PROPERTY(QString status READ status WRITE setStatus NOTIFY statusChanged)
     Q_PROPERTY(bool active READ isActive WRITE setActive NOTIFY activeChanged)
@@ -20,13 +23,14 @@ class Task : public QObject
 
 public:
     explicit Task(const QString& id, Project* parent = 0);
+    explicit Task(Project* parent = 0);
     virtual ~Task();
 
-    QString name() const;
-    void setName(const QString& name);
+    void init();
 
-    QString status() const;
-    void setStatus(const QString& status);
+    T_STRING_FIELD(project, Project);
+    T_STRING_FIELD(name, Name);
+    T_STRING_FIELD(status, Status);
 
     bool isActive() const;
     void setActive(bool active);
@@ -36,30 +40,23 @@ public:
 
     qlonglong duration() const;
 
-    QString id() const;
-
     QStringList notes() const;
     QStringList events() const;
 
 public slots:
     QString addNote(const QString& title, const QString& contents);
-    void removeNote(const QString& title);
     QString addEvent(const QString& eventType, qlonglong start, qlonglong end, const QString& title, const QString& message = QString());
-    void remove();
 
     void start();
     void stop();
 
 signals:
-    void removed();
+    void projectChanged(const QString& projectId);
     void nameChanged(const QString& name);
     void statusChanged(const QString& status);
     void activeChanged(bool active);
     void notesChanged();
     void eventsChanged();
-
-private:
-    QString mId;
 };
 
 #endif // TASK_H

@@ -10,4 +10,5 @@ QStringList Utils::stringList(QSqlQuery& query)
     {
         list << query.value(0).toString();
     }
+    return list;
 }

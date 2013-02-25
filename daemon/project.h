@@ -1,10 +1,11 @@
 #ifndef PROJECT_H
 #define PROJECT_H
 
-#include <QObject>
+#include "model.h"
+
 #include <QStringList>
 
-class Project : public QObject
+class Project : public Model
 {
     Q_OBJECT
     Q_CLASSINFO("D-Bus Interface", "com.noughmad.toutatis.Project")
@@ -14,7 +15,10 @@ class Project : public QObject
 
 public:
     explicit Project(const QString& id, QObject* parent = 0);
+    explicit Project(QObject* parent = 0);
     virtual ~Project();
+
+    void init();
 
     QString name() const;
     void setName(const QString& name);
@@ -24,23 +28,14 @@ public:
 
     QStringList tasks() const;
 
-    QString id() const;
-
 public slots:
     QString createTask(const QString& task);
-
-    void remove();
     QString findTask(const QString& task);
 
 signals:
     void tasksChanged();
-
-    void removed();
     void nameChanged(const QString& name);
     void clientChanged(const QString& name);
-
-private:
-    QString mId;
 };
 
 #endif // PROJECT_H

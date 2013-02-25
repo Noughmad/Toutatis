@@ -8,14 +8,16 @@
 #include <QVariant>
 #include <QDBusConnection>
 
-Task::Task(const QString& id, Project* parent)
-: QObject(parent)
-, mId(id)
+Task::Task(const QString& id, Project* parent) : Model("tasks", id, parent)
 {
-    new TaskAdaptor(this);
+    setProject(parent->id());
+    init();
+}
 
-    QDBusConnection dbus = QDBusConnection::sessionBus();
-    dbus.registerObject("/Task/" + id, this);
+Task::Task(Project* parent) : Model("tasks", parent)
+{
+    setProject(parent->id());
+    init();
 }
 
 Task::~Task()
@@ -23,122 +25,58 @@ Task::~Task()
 
 }
 
-QString Task::name() const
+void Task::init()
 {
-    QSqlQuery query;
-    query.prepare("SELECT name FROM tasks WHERE _id=:id");
-    query.bindValue(":id", mId);
-    query.exec();
+    new TaskAdaptor(this);
+    QDBusConnection dbus = QDBusConnection::sessionBus();
+    dbus.registerObject("/Task/" + id(), this);
 
-    if (query.next())
+    foreach (const QString& eventId, events())
     {
-        return query.value(0).toString();
+        // new Event(eventId, this);
     }
 
-    return QString();
-}
-
-void Task::setName(const QString& name)
-{
-    QSqlQuery query;
-    query.prepare("UPDATE tasks SET name=:name WHERE _id=:id");
-    query.bindValue(":id", mId);
-    query.bindValue(":name", name);
-    query.exec();
-}
-
-void Task::remove()
-{
-    QSqlQuery query;
-    query.prepare("DELETE tasks WHERE _id=:id");
-    query.bindValue(":id", mId);
-    query.exec();
-
-    deleteLater();
-}
-
-QString Task::status() const
-{
-    QSqlQuery query;
-    query.prepare("SELECT status FROM tasks WHERE _id=:id");
-    query.bindValue(":id", mId);
-    query.exec();
-
-    if (query.next())
+    foreach (const QString& noteId, notes())
     {
-        return query.value(0).toString();
+        // new Note(noteId, this);
     }
-
-    return QString();
 }
 
-void Task::setStatus(const QString& status)
-{
-    QSqlQuery query;
-    query.prepare("UPDATE tasks SET name=:name WHERE _id=:id");
-    query.bindValue(":id", mId);
-    query.bindValue(":name", status);
-    query.exec();
-}
+T_DEF_STRING_FIELD(Task, project, Project)
+T_DEF_STRING_FIELD(Task, name, Name)
+T_DEF_STRING_FIELD(Task, status, Status)
 
 QDateTime Task::lastStart() const
 {
-    QSqlQuery query;
-    query.prepare("SELECT status FROM tasks WHERE _id=:id");
-    query.bindValue(":id", mId);
-    query.exec();
-
-    if (query.next())
-    {
-        return query.value(0).toDateTime();
-    }
-
-    return QDateTime();
+    return getField("lastStart").toDateTime();
 }
 
 void Task::setLastStart(const QDateTime& start)
 {
-    QSqlQuery query;
-    query.prepare("UPDATE tasks SET lastStart=:start WHERE _id=:id");
-    query.bindValue(":id", mId);
-    query.bindValue(":start", start);
-    query.exec();
+    saveField("lastStart", start);
 }
 
 bool Task::isActive() const
 {
-    QSqlQuery query;
-    query.prepare("SELECT status FROM tasks WHERE _id=:id");
-    query.bindValue(":id", mId);
-    query.exec();
-
-    if (query.next())
-    {
-        return query.value(0).toBool();
-    }
-
-    return false;
+    return getField("active").toBool();
 }
 
 void Task::setActive(bool active)
 {
-    if (active)
-    {
-        Toutatis* main = qobject_cast<Toutatis*>(parent()->parent());
-        Q_ASSERT(main);
+    Toutatis* main = qobject_cast<Toutatis*>(parent()->parent());
+    Q_ASSERT(main);
 
-        if (main->isTracking())
-        {
-            main->stopTracking();
-        }
+    if (active != isActive())
+    {
+        main->stopTracking();
     }
 
-    QSqlQuery query;
-    query.prepare("UPDATE tasks SET lastStart=:start active=:active WHERE _id=:id");
-    query.bindValue(":id", mId);
-    query.bindValue(":active", active);
-    query.bindValue(":start", active ? QDateTime::currentDateTime() : QDateTime());
-    query.exec();
+    if (active)
+    {
+        main->startTracking(id());
+    }
+
+    emit activeChanged(active);
 }
 
 void Task::start()
@@ -153,34 +91,32 @@ void Task::stop()
 
 QString Task::addEvent(const QString& eventType, qlonglong start, qlonglong end, const QString& title, const QString& message)
 {
+    /*
     QSqlQuery query;
     QString id = QUuid::createUuid().toString();
     query.prepare("INSERT INTO events (_id, task, type, start, end, duration, title, message) VALUES (:id, :task, :type, :start, :end, :duration, :message);");
     query.bindValue(":id", id);
-    query.bindValue(":task", mId);
+    query.bindValue(":task", id());
     query.bindValue(":type", eventType);
     query.bindValue(":start", start);
     query.bindValue(":end", end);
     query.bindValue(":duration", end - start);
     query.bindValue(":message", message);
     query.exec();
+    */
 
     emit eventsChanged();
-    return id;
+    return QString();
 }
 
 QStringList Task::events() const
 {
-    QSqlQuery query;
-    query.prepare("SELECT _id FROM events WHERE task=:task;");
-    query.bindValue(":task", mId);
-    query.exec();
-
-    return Utils::stringList(query);
+    return getList("events", "task");
 }
 
 QString Task::addNote(const QString& title, const QString& contents)
 {
+    /*
     QSqlQuery query;
     QString id = QUuid::createUuid().toString();
     query.prepare("INSERT INTO notes (_id, task, title, contents) VALUES (:id, :task, :title, :contents);");
@@ -192,32 +128,13 @@ QString Task::addNote(const QString& title, const QString& contents)
 
     emit notesChanged();
     return id;
+    */
+    return QString();
 }
 
 QStringList Task::notes() const
 {
-    QSqlQuery query;
-    query.prepare("SELECT text FROM notes WHERE task=:task");
-    query.bindValue(":task", mId);
-    query.exec();
-
-    QStringList list;
-    while (query.next())
-    {
-        list << query.value(0).toString();
-    }
-
-    return list;
-}
-
-void Task::removeNote(const QString& title)
-{
-
-}
-
-QString Task::id() const
-{
-    return mId;
+    return getList("notes", "task");
 }
 
 qlonglong Task::duration() const

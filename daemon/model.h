@@ -22,6 +22,17 @@
 
 #include <QObject>
 
+#define T_STRING_FIELD(name, upperName)         \
+QString name() const;                           \
+void set##upperName(const QString& name);       \
+
+#define T_DEF_STRING_FIELD(cls, name, upperName)                \
+QString cls::name() const {return getField(#name).toString();}  \
+void cls::set##upperName(const QString& name) {                 \
+    saveField(#name, name);                                     \
+    emit name##Changed(name);                                   \
+}
+
 
 class Model : public QObject
 {
@@ -35,16 +46,33 @@ public:
 
     QString id() const;
 
-public Q_SLOTS:
+    template <class T>
+    static T* findObject(const QString& id);
+
+    static void registerObject(Model* object);
+    static Model* findObject(const QString& id);
+
+public slots:
     void remove();
 
+signals:
+    void removed();
+
 protected:
-    void saveField(const QString& field);
-    QVariant getField(const QString& field);
+    void saveField(const QString& field, const QVariant& value);
+    QVariant getField(const QString& field) const;
+    QStringList getList(const QString& table, const QString& key) const;
 
 private:
     QString mTableName;
     QString mId;
 };
+
+template <class T>
+T* Model::findObject(const QString& id)
+{
+    return qobject_cast<T*>(findObject(id));
+}
+
 
 #endif // MODEL_H

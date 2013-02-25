@@ -29,9 +29,6 @@
       <arg name="title" type="s" direction="in"/>
       <arg name="contents" type="s" direction="in"/>
     </method>
-    <method name="removeNote">
-      <arg name="title" type="s" direction="in"/>
-    </method>
     <method name="addEvent">
       <arg type="s" direction="out"/>
       <arg name="eventType" type="s" direction="in"/>

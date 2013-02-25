@@ -21,18 +21,36 @@
 
 #include <QUuid>
 #include <QVariant>
+#include <QStringList>
 #include <QSqlQuery>
+#include <QSqlError>
+#include <QDebug>
+
+class ObjectStore
+{
+public:
+    QMap<QString, Model*> objects;
+};
+
+Q_GLOBAL_STATIC(ObjectStore, store)
 
 Model::Model(const QString& tableName, QObject* parent)
 : QObject(parent)
 , mTableName(tableName)
 {
     mId = QUuid::createUuid().toString();
+    mId.remove(mId.size()-1, 1);
+    mId.remove(0, 1);
+    mId.replace(QRegExp("[^A-Za-z0-9]"), "_");
 
     QSqlQuery query;
-    query.prepare("INSERT INTO :tableName (_id) VALUES :id");
-    query.bindValue(":tableName", mTableName);
+    query.prepare("INSERT INTO " + mTableName + " (_id) VALUES (:id)");
     query.bindValue(":id", mId);
+
+    bool ok = query.exec();
+    Q_ASSERT(ok);
+
+    registerObject(this);
 }
 
 Model::Model(const QString& tableName, const QString& id, QObject* parent)
@@ -40,7 +58,7 @@ Model::Model(const QString& tableName, const QString& id, QObject* parent)
 , mTableName(tableName)
 , mId(id)
 {
-
+    registerObject(this);
 }
 
 Model::~Model()
@@ -51,11 +69,11 @@ Model::~Model()
 void Model::remove()
 {
     QSqlQuery query;
-    query.prepare("DELETE :tableName WHERE _id=:id");
-    query.bindValue(":tableName", mTableName);
+    query.prepare("DELETE " + mTableName + " WHERE _id=:id");
     query.bindValue(":id", mId);
     query.exec();
 
+    emit removed();
     deleteLater();
 }
 
@@ -64,12 +82,10 @@ QString Model::id() const
     return mId;
 }
 
-QVariant Model::getField(const QString& field)
+QVariant Model::getField(const QString& field) const
 {
     QSqlQuery query;
-    query.prepare("SELECT :field FROM :tableName WHERE _id=:id");
-    query.bindValue(":field", field);
-    query.bindValue(":tableName", mTableName);
+    query.prepare("SELECT " + field + " FROM " + mTableName + " WHERE _id=:id");
     query.bindValue(":id", mId);
 
     query.exec();
@@ -81,13 +97,39 @@ QVariant Model::getField(const QString& field)
     return QVariant();
 }
 
-void Model::saveField(const QString& field)
+void Model::saveField(const QString& field, const QVariant& value)
 {
     QSqlQuery query;
-    query.prepare("UPDATE :tableName SET :field=:value WHERE _id=:id");
-    query.bindValue(":tableName", mTableName);
-    query.bindValue(":field", field);
-    query.bindValue(":value", property("field"));
+    query.prepare("UPDATE " + mTableName + " SET " + field + "=:value WHERE _id=:id");
+    query.bindValue(":value", value);
     query.bindValue(":id", mId);
     query.exec();
+}
+
+QStringList Model::getList(const QString& table, const QString& key) const
+{
+    QSqlQuery query;
+    query.prepare("SELECT _id FROM " + table + " WHERE " + key + "=:id");
+    query.bindValue(":id", mId);
+    query.exec();
+
+    QStringList list;
+    while (query.next())
+    {
+        list << query.value(0).toString();
+    }
+    return list;
+}
+
+void Model::registerObject(Model* object)
+{
+    Q_ASSERT(!store()->objects.contains(object->id()));
+    Q_ASSERT(!store()->objects.values().contains(object));
+
+    store()->objects.insert(object->mId, object);
+}
+
+Model* Model::findObject(const QString& id)
+{
+    return store()->objects.value(id, 0);
 }
