@@ -18,8 +18,8 @@ class Task : public Model
     Q_PROPERTY(QString status READ status WRITE setStatus NOTIFY statusChanged)
     Q_PROPERTY(bool active READ isActive WRITE setActive NOTIFY activeChanged)
     Q_PROPERTY(QDateTime lastStart READ lastStart WRITE setLastStart)
-    Q_PROPERTY(QStringList notes READ notes NOTIFY notesChanged)
-    Q_PROPERTY(QStringList events READ events NOTIFY eventsChanged)
+    Q_PROPERTY(QStringList noteIds READ noteIds NOTIFY notesChanged)
+    Q_PROPERTY(QStringList eventIds READ eventIds NOTIFY eventsChanged)
     Q_PROPERTY(qlonglong duration READ duration)
 
 public:
@@ -41,8 +41,8 @@ public:
 
     qlonglong duration() const;
 
-    QStringList notes() const;
-    QStringList events() const;
+    QStringList noteIds() const;
+    QStringList eventIds() const;
 
 public slots:
     QString addNote(const QString& title, const QString& contents);

@@ -33,13 +33,13 @@ void Task::init()
     QDBusConnection dbus = QDBusConnection::sessionBus();
     dbus.registerObject("/Task/" + id(), this);
 
-    foreach (const QString& eventId, events())
+    foreach (const QString& eventId, eventIds())
     {
         Event* e = new Event(eventId, this);
         connect (e, SIGNAL(removed()), SIGNAL(eventsChanged()));
     }
 
-    foreach (const QString& noteId, notes())
+    foreach (const QString& noteId, noteIds())
     {
         Note* n = new Note(noteId, this);
         connect (n, SIGNAL(removed()), SIGNAL(notesChanged()));
@@ -112,7 +112,7 @@ QString Task::addEvent(const QString& eventType, const QDateTime& start, const Q
     return e->id();
 }
 
-QStringList Task::events() const
+QStringList Task::eventIds() const
 {
     return getList("events", "task");
 }
@@ -127,7 +127,7 @@ QString Task::addNote(const QString& title, const QString& contents)
     return n->id();
 }
 
-QStringList Task::notes() const
+QStringList Task::noteIds() const
 {
     return getList("notes", "task");
 }

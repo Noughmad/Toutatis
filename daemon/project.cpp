@@ -26,7 +26,7 @@ void Project::init()
     QDBusConnection dbus = QDBusConnection::sessionBus();
     bool ok = dbus.registerObject("/Project/" + id(), this);
 
-    foreach (const QString& taskId, tasks())
+    foreach (const QString& taskId, taskIds())
     {
         Task* t = new Task(taskId, this);
         connect (t, SIGNAL(removed()), SIGNAL(tasksChanged()));
@@ -51,7 +51,7 @@ void Project::setVisible(bool visible)
     saveField("visible", visible);
 }
 
-QStringList Project::tasks() const
+QStringList Project::taskIds() const
 {
     return getList("tasks", "project");
 }

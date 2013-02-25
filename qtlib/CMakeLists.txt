@@ -2,6 +2,8 @@ include_directories(${QT_INCLUDES} ${CMAKE_CURRENT_SOURCE_DIR} ${CMAKE_CURRENT_B
 
 set(Toutatis_qtlib_SRCS
     toutatis.cpp
+    project.cpp
+    tasktreemodel.cpp
 )
 
 qt4_automoc(${Toutatis_qtlib_SRCS})

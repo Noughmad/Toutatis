@@ -1,50 +1,15 @@
 #include "tasktreemodel.h"
+#include "tasktreemodel_p.h"
 
-#include "toutatis_interface.h"
-#include "project_interface.h"
+#include "toutatis.h"
+#include "project.h"
 #include "task_interface.h"
 
 using namespace com::noughmad;
 using namespace com::noughmad::toutatis;
 
-class TaskTreeModelPrivate
-{
-public:
-    TaskTreeModelPrivate(TaskTreeModel* q) : q_ptr(q) {}
-    Toutatis* daemon;
-    QList<Project*> projects;
-    QHash<Project*, QList<Task*> > tasks;
-
-    void loadProjects();
-    void loadProject(Project* p);
-
-private:
-    TaskTreeModel* const q_ptr;
-    Q_DECLARE_PUBLIC(TaskTreeModel);
-};
-
 void TaskTreeModelPrivate::loadProjects()
 {
-    Q_Q(TaskTreeModel);
-    int start = projects.size();
-
-    QList<Project*> addedProjects;
-    foreach (const QString& id, daemon->projects())
-    {
-        Project* p = new Project("com.noughmad.Toutatis",
-            "/Projects/" + id,
-            QDBusConnection::sessionBus(),
-            q);
-
-        if (p->isValid())
-        {
-            addedProjects << p;
-        }
-    }
-
-    q->beginInsertRows(QModelIndex(), projects.size(), projects.size() + addedProjects.size() - 1);
-    projects << addedProjects;
-    q->endInsertRows();
 }
 
 TaskTreeModel::TaskTreeModel(QObject* parent)
@@ -57,6 +22,8 @@ TaskTreeModel::TaskTreeModel(QObject* parent)
         "/Toutatis",
         QDBusConnection::sessionBus(),
         this);
+    connect(d->daemon, SIGNAL(projectsChanged()), SLOT(loadProjects()));
+    d->loadProjects();
 }
 
 TaskTreeModel::~TaskTreeModel()

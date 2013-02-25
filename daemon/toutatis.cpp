@@ -48,7 +48,7 @@ Toutatis::Toutatis(QObject* parent) : QObject(parent)
     dbus.registerObject("/Toutatis", this);
     dbus.registerService("com.noughmad.Toutatis");
 
-    foreach (const QString& projectId, projects())
+    foreach (const QString& projectId, projectIds())
     {
         Project* p = new Project(projectId, this);
         connect (p, SIGNAL(removed()), SIGNAL(projectsChanged()));
@@ -101,7 +101,7 @@ void Toutatis::createTables()
         "content TEXT);");
 }
 
-QStringList Toutatis::projects() const
+QStringList Toutatis::projectIds() const
 {
     QSqlQuery query;
     query.prepare("SELECT _id FROM projects WHERE visible = 1;");

@@ -22,6 +22,7 @@ public:
 private:
     TaskTreeModelPrivate* const d_ptr;
     Q_DECLARE_PRIVATE(TaskTreeModel)
+    Q_PRIVATE_SLOT(d_func(), void loadProjects());
 };
 
 #endif // TASKTREEMODEL_H
