@@ -3,6 +3,8 @@
 #include "project.h"
 #include "toutatis.h"
 #include "utils.h"
+#include "event.h"
+#include "note.h"
 
 #include <QSqlQuery>
 #include <QVariant>
@@ -33,12 +35,14 @@ void Task::init()
 
     foreach (const QString& eventId, events())
     {
-        // new Event(eventId, this);
+        Event* e = new Event(eventId, this);
+        connect (e, SIGNAL(removed()), SIGNAL(eventsChanged()));
     }
 
     foreach (const QString& noteId, notes())
     {
-        // new Note(noteId, this);
+        Note* n = new Note(noteId, this);
+        connect (n, SIGNAL(removed()), SIGNAL(notesChanged()));
     }
 }
 
@@ -89,24 +93,16 @@ void Task::stop()
     setActive(false);
 }
 
-QString Task::addEvent(const QString& eventType, qlonglong start, qlonglong end, const QString& title, const QString& message)
+QString Task::addEvent(const QString& eventType, const QDateTime& start, const QDateTime& end, const QString& message)
 {
-    /*
-    QSqlQuery query;
-    QString id = QUuid::createUuid().toString();
-    query.prepare("INSERT INTO events (_id, task, type, start, end, duration, title, message) VALUES (:id, :task, :type, :start, :end, :duration, :message);");
-    query.bindValue(":id", id);
-    query.bindValue(":task", id());
-    query.bindValue(":type", eventType);
-    query.bindValue(":start", start);
-    query.bindValue(":end", end);
-    query.bindValue(":duration", end - start);
-    query.bindValue(":message", message);
-    query.exec();
-    */
+    Event* e = new Event(this);
+    e->setType(eventType);
+    e->setStart(start);
+    e->setEnd(end);
+    e->setMessage(message);
 
     emit eventsChanged();
-    return QString();
+    return e->id();
 }
 
 QStringList Task::events() const
@@ -116,20 +112,12 @@ QStringList Task::events() const
 
 QString Task::addNote(const QString& title, const QString& contents)
 {
-    /*
-    QSqlQuery query;
-    QString id = QUuid::createUuid().toString();
-    query.prepare("INSERT INTO notes (_id, task, title, contents) VALUES (:id, :task, :title, :contents);");
-    query.bindValue(":id", id);
-    query.bindValue(":task", mId);
-    query.bindValue(":title", title);
-    query.bindValue(":contents", contents);
-    query.exec();
+    Note* n = new Note(this);
+    n->setTitle(title);
+    n->setContent(contents);
 
     emit notesChanged();
-    return id;
-    */
-    return QString();
+    return n->id();
 }
 
 QStringList Task::notes() const
@@ -139,7 +127,10 @@ QStringList Task::notes() const
 
 qlonglong Task::duration() const
 {
-    // TODO;
-    return 0;
+    QSqlQuery query;
+    query.prepare("SELECT sum(duration) FROM events WHERE task=:id");
+    query.bindValue(":id", id());
+    query.exec();
+    return query.value(0).toLongLong();
 }
 

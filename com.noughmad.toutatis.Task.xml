@@ -1,6 +1,7 @@
 <!DOCTYPE node PUBLIC "-//freedesktop//DTD D-BUS Object Introspection 1.0//EN" "http://www.freedesktop.org/standards/dbus/1.0/introspect.dtd">
 <node>
   <interface name="com.noughmad.toutatis.Task">
+    <property name="project" type="s" access="readwrite"/>
     <property name="name" type="s" access="readwrite"/>
     <property name="status" type="s" access="readwrite"/>
     <property name="active" type="b" access="readwrite"/>
@@ -9,7 +10,9 @@
     </property>
     <property name="notes" type="as" access="read"/>
     <property name="events" type="as" access="read"/>
-    <signal name="removed">
+    <property name="duration" type="x" access="read"/>
+    <signal name="projectChanged">
+      <arg name="projectId" type="s" direction="out"/>
     </signal>
     <signal name="nameChanged">
       <arg name="name" type="s" direction="out"/>
@@ -24,6 +27,10 @@
     </signal>
     <signal name="eventsChanged">
     </signal>
+    <signal name="removed">
+    </signal>
+    <method name="remove">
+    </method>
     <method name="addNote">
       <arg type="s" direction="out"/>
       <arg name="title" type="s" direction="in"/>
@@ -32,19 +39,19 @@
     <method name="addEvent">
       <arg type="s" direction="out"/>
       <arg name="eventType" type="s" direction="in"/>
-      <arg name="start" type="x" direction="in"/>
-      <arg name="end" type="x" direction="in"/>
-      <arg name="title" type="s" direction="in"/>
+      <arg name="start" type="((iii)(iiii)i)" direction="in"/>
+      <annotation name="org.qtproject.QtDBus.QtTypeName.In1" value="QDateTime"/>
+      <arg name="end" type="((iii)(iiii)i)" direction="in"/>
+      <annotation name="org.qtproject.QtDBus.QtTypeName.In2" value="QDateTime"/>
       <arg name="message" type="s" direction="in"/>
     </method>
     <method name="addEvent">
       <arg type="s" direction="out"/>
       <arg name="eventType" type="s" direction="in"/>
-      <arg name="start" type="x" direction="in"/>
-      <arg name="end" type="x" direction="in"/>
-      <arg name="title" type="s" direction="in"/>
-    </method>
-    <method name="remove">
+      <arg name="start" type="((iii)(iiii)i)" direction="in"/>
+      <annotation name="org.qtproject.QtDBus.QtTypeName.In1" value="QDateTime"/>
+      <arg name="end" type="((iii)(iiii)i)" direction="in"/>
+      <annotation name="org.qtproject.QtDBus.QtTypeName.In2" value="QDateTime"/>
     </method>
     <method name="start">
     </method>

@@ -50,11 +50,12 @@ Toutatis::Toutatis(QObject* parent) : QObject(parent)
 
     foreach (const QString& projectId, projects())
     {
-        new Project(projectId, this);
+        Project* p = new Project(projectId, this);
+        connect (p, SIGNAL(removed()), SIGNAL(projectsChanged()));
     }
 
     QSqlQuery currentTask;
-    currentTask.exec("SELECT _id FROM tasks WHERE active=true;");
+    currentTask.exec("SELECT _id FROM tasks WHERE active=1;");
     if (currentTask.next())
     {
         mCurrentTask = currentTask.value(0).toString();
@@ -88,9 +89,9 @@ void Toutatis::createTables()
     query.exec("CREATE TABLE events "
         "(_id TEXT PRIMARY KEY, "
         "task INTEGER REFERENCES tasks(_id), "
+        "type TEXT, "
         "start INTEGER, "
         "end INTEGER, "
-        "duration INTEGER, "
         "message TEXT);");
 
     query.exec("CREATE TABLE notes "
@@ -129,10 +130,10 @@ void Toutatis::startTracking(const QString& id)
     stopTracking();
 
     QSqlQuery query;
-    query.prepare("UPDATE tasks SET active=true, lastStart=:start "
+    query.prepare("UPDATE tasks SET active=1, lastStart=:start "
     "WHERE _id=:id;");
     query.bindValue(":id", id);
-    query.bindValue(":start", QDateTime::currentMSecsSinceEpoch());
+    query.bindValue(":start", QDateTime::currentDateTime());
     query.exec();
 
     if (query.numRowsAffected() > 0)
@@ -181,21 +182,21 @@ void Toutatis::stopTracking()
         return;
     }
 
-    qlonglong start;
+    QDateTime start;
     QSqlQuery select;
-    select.exec("SELECT lastStart FROM tasks WHERE active=true;");
+    select.exec("SELECT lastStart FROM tasks WHERE active=1;");
 
     if (select.next())
     {
-        start = select.value(0).toLongLong();
+        start = select.value(0).toDateTime();
     }
 
     Task* task = Model::findObject<Task>(mCurrentTask);
     Q_ASSERT(task);
-    task->addEvent("TimeTracking", start, QDateTime::currentMSecsSinceEpoch(), QDateTime::currentDateTime().toString());
+    task->addEvent("TimeTracking", start, QDateTime::currentDateTime(), QDateTime::currentDateTime().toString());
 
     QSqlQuery query;
-    query.prepare("UPDATE tasks SET active=false, lastStart=0 WHERE active=true;");
+    query.prepare("UPDATE tasks SET active=0, lastStart=0 WHERE active=1;");
     query.exec();
 
     mCurrentTask = QString();

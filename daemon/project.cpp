@@ -28,7 +28,8 @@ void Project::init()
 
     foreach (const QString& taskId, tasks())
     {
-        new Task(taskId, this);
+        Task* t = new Task(taskId, this);
+        connect (t, SIGNAL(removed()), SIGNAL(tasksChanged()));
     }
 }
 

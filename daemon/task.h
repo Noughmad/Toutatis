@@ -20,6 +20,7 @@ class Task : public Model
     Q_PROPERTY(QDateTime lastStart READ lastStart WRITE setLastStart)
     Q_PROPERTY(QStringList notes READ notes NOTIFY notesChanged)
     Q_PROPERTY(QStringList events READ events NOTIFY eventsChanged)
+    Q_PROPERTY(qlonglong duration READ duration)
 
 public:
     explicit Task(const QString& id, Project* parent = 0);
@@ -45,7 +46,7 @@ public:
 
 public slots:
     QString addNote(const QString& title, const QString& contents);
-    QString addEvent(const QString& eventType, qlonglong start, qlonglong end, const QString& title, const QString& message = QString());
+    QString addEvent(const QString& eventType, const QDateTime& start, const QDateTime& end, const QString& message = QString());
 
     void start();
     void stop();

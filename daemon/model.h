@@ -22,9 +22,12 @@
 
 #include <QObject>
 
-#define T_STRING_FIELD(name, upperName)         \
-QString name() const;                           \
-void set##upperName(const QString& name);       \
+#define T_REF_FIELD(type, name, upperName)      \
+type name() const;                              \
+void set##upperName(const type& name);          \
+
+#define T_STRING_FIELD(name, upperName) T_REF_FIELD(QString, name, upperName)
+#define T_DATE_FIELD(name, upperName) T_REF_FIELD(QDateTime, name, upperName)
 
 #define T_DEF_STRING_FIELD(cls, name, upperName)                \
 QString cls::name() const {return getField(#name).toString();}  \
@@ -33,6 +36,12 @@ void cls::set##upperName(const QString& name) {                 \
     emit name##Changed(name);                                   \
 }
 
+#define T_DEF_DATE_FIELD_X(cls, name, upperName, signalName)                \
+QDateTime cls::name() const {return getField(#name).toDateTime();}  \
+void cls::set##upperName(const QDateTime& name) {                 \
+    saveField(#name, name);                                     \
+    emit signalName();                                   \
+}
 
 class Model : public QObject
 {
