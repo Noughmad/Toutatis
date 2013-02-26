@@ -6,6 +6,10 @@
 #include "../qtlib/toutatis.h"
 #include "../qtlib/task.h"
 
+#include <iostream>
+
+using namespace std;
+
 class Arguments
 {
 public:
@@ -68,10 +72,56 @@ Client::~Client()
 bool Client::parseArguments(const QStringList& arguments)
 {
     QStringList a = arguments;
+    a.removeFirst();
     Arguments args(a);
 
     Project* project = getProject(args.project);
     Task* task = getTask(args.task, args.project);
+    
+    QTextStream stream(stdout);
+        
+    if (args.command == "list-projects")
+    {
+        if (mDaemon->projects().isEmpty())
+        {
+            stream << "No projects" << endl;
+        }
+        else
+        {
+            foreach (Project* p, mDaemon->projects())
+            {
+                stream << p->name();
+                if (p->client().isEmpty())
+                {
+                    stream << " (" << p->client() << ')' << endl;
+                }
+            }
+        }
+        return true;
+    }
+    else if (args.command == "list-tasks")
+    {
+        if (!project)
+        {
+            qWarning() << "No project specified";
+        }
+        else if (project->tasks().isEmpty())
+        {
+            stream << "No tasks for project \"" << project->name() << "\"" << endl;
+        }
+        else
+        {
+            foreach (Task* t, project->tasks())
+            {
+                stream << t->name();
+                if (!t->status().isEmpty())
+                {
+                    stream << " (" << t->status() << ')' << endl;
+                }
+            }
+        }
+        return true;
+    }
 
     return false;
 }
