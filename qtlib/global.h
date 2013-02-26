@@ -3,8 +3,6 @@
 
 #include <QList>
 #include <QStringList>
-#include <QHash>
-#include <QPointer>
 
 static const char* Service = "com.noughmad.Toutatis";
 
