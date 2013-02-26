@@ -51,7 +51,7 @@ Toutatis::Toutatis(QObject* parent) : QObject(parent)
     foreach (const QString& projectId, projectIds())
     {
         Project* p = new Project(projectId, this);
-        connect (p, SIGNAL(removed()), SIGNAL(projectsChanged()));
+        connect (p, SIGNAL(removed()), SIGNAL(projectIdsChanged()));
     }
 
     QSqlQuery currentTask;
@@ -116,7 +116,7 @@ QString Toutatis::createProject(const QString& name, const QString& client)
     project->setName(name);
     project->setClient(client);
 
-    emit projectsChanged();
+    emit projectIdsChanged();
     return project->id();
 }
 

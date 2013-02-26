@@ -10,7 +10,7 @@ class Toutatis : public QObject
     Q_OBJECT
     Q_CLASSINFO("D-Bus Interface", "com.noughmad.Toutatis")
     Q_PROPERTY(QString currentTask READ currentTask WRITE startTracking NOTIFY currentTaskChanged)
-    Q_PROPERTY(QStringList projectIds READ projectIds NOTIFY projectsChanged)
+    Q_PROPERTY(QStringList projectIds READ projectIds NOTIFY projectIdsChanged)
 
 public:
     Toutatis(QObject* parent = 0);
@@ -31,7 +31,7 @@ public slots:
     QString findTask(const QString& project, const QString& task);
 
 signals:
-    void projectsChanged();
+    void projectIdsChanged();
     void currentTaskChanged(const QString& id);
 
 private:

@@ -13,13 +13,13 @@ class Task : public Model
 {
     Q_OBJECT
     Q_CLASSINFO("D-Bus Interface", "com.noughmad.toutatis.Task")
-    Q_PROPERTY(QString project READ project WRITE setProject NOTIFY projectChanged)
+    Q_PROPERTY(QString projectId READ projectId WRITE setProjectId NOTIFY projectIdChanged)
     Q_PROPERTY(QString name READ name WRITE setName NOTIFY nameChanged)
     Q_PROPERTY(QString status READ status WRITE setStatus NOTIFY statusChanged)
     Q_PROPERTY(bool active READ isActive WRITE setActive NOTIFY activeChanged)
     Q_PROPERTY(QDateTime lastStart READ lastStart WRITE setLastStart)
-    Q_PROPERTY(QStringList noteIds READ noteIds NOTIFY notesChanged)
-    Q_PROPERTY(QStringList eventIds READ eventIds NOTIFY eventsChanged)
+    Q_PROPERTY(QStringList noteIds READ noteIds NOTIFY noteIdsChanged)
+    Q_PROPERTY(QStringList eventIds READ eventIds NOTIFY eventIdsChanged)
     Q_PROPERTY(qlonglong duration READ duration)
 
 public:
@@ -29,7 +29,7 @@ public:
 
     void init();
 
-    T_STRING_FIELD(project, Project);
+    T_STRING_FIELD(projectId, ProjectId);
     T_STRING_FIELD(name, Name);
     T_STRING_FIELD(status, Status);
 
@@ -52,12 +52,12 @@ public slots:
     void stop();
 
 signals:
-    void projectChanged(const QString& projectId);
+    void projectIdChanged(const QString& projectId);
     void nameChanged(const QString& name);
     void statusChanged(const QString& status);
     void activeChanged(bool active);
-    void notesChanged();
-    void eventsChanged();
+    void noteIdsChanged();
+    void eventIdsChanged();
 };
 
 #endif // TASK_H

@@ -11,7 +11,7 @@ class Project : public Model
     Q_CLASSINFO("D-Bus Interface", "com.noughmad.toutatis.Project")
     Q_PROPERTY(QString name READ name WRITE setName NOTIFY nameChanged)
     Q_PROPERTY(QString client READ client WRITE setClient NOTIFY clientChanged)
-    Q_PROPERTY(QStringList taskIds READ taskIds NOTIFY tasksChanged)
+    Q_PROPERTY(QStringList taskIds READ taskIds NOTIFY taskIdsChanged)
     Q_PROPERTY(bool visible READ isVisible WRITE setVisible NOTIFY visibleChanged)
 
 public:
@@ -34,7 +34,7 @@ public slots:
     QString findTask(const QString& task);
 
 signals:
-    void tasksChanged();
+    void taskIdsChanged();
     void nameChanged(const QString& name);
     void clientChanged(const QString& name);
     void visibleChanged(bool visible);

@@ -25,13 +25,13 @@
 
 Event::Event(const QString& id, Task* parent): Model("events", id, parent)
 {
-    setTask(parent->id());
+    setTaskId(parent->id());
     init();
 }
 
 Event::Event(Task* parent): Model("events", parent)
 {
-    setTask(parent->id());
+    setTaskId(parent->id());
     init();
 }
 
@@ -47,7 +47,7 @@ void Event::init()
     dbus.registerObject("/Event/" + id(), this);
 }
 
-T_DEF_STRING_FIELD(Event, task, Task)
+T_DEF_STRING_FIELD(Event, taskId, TaskId)
 T_DEF_STRING_FIELD(Event, type, Type)
 T_DEF_STRING_FIELD(Event, message, Message)
 

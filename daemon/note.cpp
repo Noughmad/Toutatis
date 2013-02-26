@@ -24,13 +24,13 @@
 
 Note::Note(Task* parent): Model("notes", parent)
 {
-    setTask(parent->id());
+    setTaskId(parent->id());
     init();
 }
 
 Note::Note(const QString& id, Task* parent): Model("notes", id, parent)
 {
-    setTask(parent->id());
+    setTaskId(parent->id());
     init();
 }
 
@@ -46,6 +46,6 @@ void Note::init()
     
 }
 
-T_DEF_STRING_FIELD(Note, task, Task)
+T_DEF_STRING_FIELD(Note, taskId, TaskId)
 T_DEF_STRING_FIELD(Note, title, Title)
 T_DEF_STRING_FIELD(Note, content, Content)

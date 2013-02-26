@@ -4,9 +4,9 @@
   <interface name="com.noughmad.toutatis.Project">
     <property name="name" type="s" access="readwrite"/>
     <property name="client" type="s" access="readwrite"/>
-    <property name="tasks" type="as" access="read"/>
+    <property name="taskIds" type="as" access="read"/>
     <property name="visible" type="b" access="readwrite"/>
-    <signal name="tasksChanged">
+    <signal name="taskIdsChanged">
     </signal>
     <signal name="nameChanged">
       <arg name="name" type="s" direction="out"/>
@@ -25,6 +25,7 @@
       <arg type="s" direction="out"/>
       <arg name="task" type="s" direction="in"/>
     </method>
+    <property name="id" type="s" access="read"/>
     <signal name="removed"/>
     <method name="remove"/>
   </interface>

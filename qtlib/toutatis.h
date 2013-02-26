@@ -20,6 +20,9 @@ public:
 
 public Q_SLOTS:
     void updateProjects();
+    
+signals:
+    void projectsChanged();
 
 private:
     ToutatisPrivate* const d_ptr;

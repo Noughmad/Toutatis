@@ -18,4 +18,37 @@
 
 
 #include "project.h"
+#include "task.h"
+#include "global.h"
+
+class ProjectPrivate
+{
+public:
+    QList<Task*> tasks;
+};
+
+Project::Project(const QString& id, QObject* parent)
+: com::noughmad::toutatis::Project(Service, "Project/" + id, QDBusConnection::sessionBus())
+, d_ptr(new ProjectPrivate)
+{
+    connect (this, SIGNAL(taskIdsChanged()), SLOT(updateTasks()));
+}
+
+Project::~Project()
+{
+    delete d_ptr;
+}
+
+QList< Task* > Project::tasks() const
+{
+    Q_D(const Project);
+    return d->tasks;
+}
+
+void Project::updateTasks()
+{
+    Q_D(Project);
+    updateModelList(d->tasks, taskIds(), this);
+    emit tasksChanged();
+}
 

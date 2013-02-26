@@ -2,8 +2,8 @@
 <node>
   <interface name="com.noughmad.Toutatis">
     <property name="currentTask" type="s" access="readwrite"/>
-    <property name="projects" type="as" access="read"/>
-    <signal name="projectsChanged">
+    <property name="projectIds" type="as" access="read"/>
+    <signal name="projectIdsChanged">
     </signal>
     <signal name="currentTaskChanged">
       <arg name="id" type="s" direction="out"/>

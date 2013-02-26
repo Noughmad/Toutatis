@@ -29,7 +29,7 @@ class Event : public Model
 {
     Q_OBJECT
     Q_CLASSINFO("D-Bus Interface", "com.noughmad.toutatis.Event")
-    Q_PROPERTY(QString task READ task WRITE setTask NOTIFY taskChanged)
+    Q_PROPERTY(QString taskId READ taskId WRITE setTaskId NOTIFY taskIdChanged)
     Q_PROPERTY(QString type READ type WRITE setType NOTIFY typeChanged)
     Q_PROPERTY(QString message READ type WRITE setMessage NOTIFY messageChanged)
     Q_PROPERTY(QDateTime start READ start WRITE setStart NOTIFY timeChanged)
@@ -41,7 +41,7 @@ public:
     explicit Event(const QString& id, Task* parent = 0);
     virtual ~Event();
 
-    T_STRING_FIELD(task, Task)
+    T_STRING_FIELD(taskId, TaskId)
     T_STRING_FIELD(type, Type)
     T_STRING_FIELD(message, Message)
     T_DATE_FIELD(start, Start)
@@ -53,7 +53,7 @@ private:
     void init();
 
 signals:
-    void taskChanged(const QString& task);
+    void taskIdChanged(const QString& task);
     void typeChanged(const QString& type);
     void messageChanged(const QString& message);
     void timeChanged();

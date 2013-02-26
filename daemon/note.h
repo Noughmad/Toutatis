@@ -27,7 +27,7 @@ class Note : public Model
 {
     Q_OBJECT
     Q_CLASSINFO("D-Bus Interface", "com.noughmad.toutatis.Note")
-    Q_PROPERTY(QString task READ task WRITE setTask NOTIFY taskChanged)
+    Q_PROPERTY(QString taskId READ taskId WRITE setTaskId NOTIFY taskIdChanged)
     Q_PROPERTY(QString title READ title WRITE setTitle NOTIFY titleChanged)
     Q_PROPERTY(QString content READ content WRITE setContent NOTIFY contentChanged)
 
@@ -36,7 +36,7 @@ public:
     explicit Note(const QString& id, Task* parent = 0);
     virtual ~Note();
 
-    T_STRING_FIELD(task, Task)
+    T_STRING_FIELD(taskId, TaskId)
     T_STRING_FIELD(title, Title)
     T_STRING_FIELD(content, Content)
 
@@ -44,7 +44,7 @@ private:
     void init();
 
 signals:
-    void taskChanged(const QString& task);
+    void taskIdChanged(const QString& task);
     void titleChanged(const QString& title);
     void contentChanged(const QString& content);
 };

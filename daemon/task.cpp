@@ -12,13 +12,13 @@
 
 Task::Task(const QString& id, Project* parent) : Model("tasks", id, parent)
 {
-    setProject(parent->id());
+    setProjectId(parent->id());
     init();
 }
 
 Task::Task(Project* parent) : Model("tasks", parent)
 {
-    setProject(parent->id());
+    setProjectId(parent->id());
     init();
 }
 
@@ -36,17 +36,17 @@ void Task::init()
     foreach (const QString& eventId, eventIds())
     {
         Event* e = new Event(eventId, this);
-        connect (e, SIGNAL(removed()), SIGNAL(eventsChanged()));
+        connect (e, SIGNAL(removed()), SIGNAL(eventIdsChanged()));
     }
 
     foreach (const QString& noteId, noteIds())
     {
         Note* n = new Note(noteId, this);
-        connect (n, SIGNAL(removed()), SIGNAL(notesChanged()));
+        connect (n, SIGNAL(removed()), SIGNAL(noteIdsChanged()));
     }
 }
 
-T_DEF_STRING_FIELD(Task, project, Project)
+T_DEF_STRING_FIELD(Task, projectId, ProjectId)
 T_DEF_STRING_FIELD(Task, name, Name)
 T_DEF_STRING_FIELD(Task, status, Status)
 
@@ -108,7 +108,7 @@ QString Task::addEvent(const QString& eventType, const QDateTime& start, const Q
     }
     e->setMessage(message);
 
-    emit eventsChanged();
+    emit eventIdsChanged();
     return e->id();
 }
 
@@ -123,7 +123,7 @@ QString Task::addNote(const QString& title, const QString& contents)
     n->setTitle(title);
     n->setContent(contents);
 
-    emit notesChanged();
+    emit noteIdsChanged();
     return n->id();
 }
 

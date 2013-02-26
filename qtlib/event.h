@@ -17,35 +17,28 @@
 */
 
 
-#ifndef PROJECT_H
-#define PROJECT_H
+#ifndef EVENT_H
+#define EVENT_H
 
-#include "project_interface.h"
-#include <QList>
+#include "event_interface.h"
 
 class Task;
-class ProjectPrivate;
+class EventPrivate;
 
-class Project : public com::noughmad::toutatis::Project
+class Event : public com::noughmad::toutatis::Event
 {
     Q_OBJECT
-    Q_PROPERTY(QList<Task*> tasks READ tasks NOTIFY tasksChanged)
+    Q_PROPERTY(Task* task READ task)
     
 public:
-    Project(const QString& id, QObject* parent = 0);
-    ~Project();
+    Event(const QString& id, QObject* parent);
+    virtual ~Event();
     
-    QList<Task*> tasks() const;
-    
-public slots:
-    void updateTasks();
-    
-signals:
-    void tasksChanged();
+    Task* task() const;
     
 private:
-    ProjectPrivate* const d_ptr;
-    Q_DECLARE_PRIVATE(Project);
+    EventPrivate* const d_ptr;
+    Q_DECLARE_PRIVATE(Event);
 };
 
-#endif // PROJECT_H
+#endif // EVENT_H
