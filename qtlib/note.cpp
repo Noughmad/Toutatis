@@ -32,8 +32,8 @@ Note::Note(const QString& id, QObject* parent)
 , d_ptr(new NotePrivate)
 {
     Q_D(Note);
-    d->task = qobject_cast< Task* >(parent);
-    Q_ASSERT(d->task);
+    d->task = getOrCreateModel<Task>(parent, taskId(), this);
+    Q_ASSERT(d->task->isValid());
 }
 
 Note::~Note()

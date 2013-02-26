@@ -2,6 +2,9 @@
 #include "toutatis_interface.h"
 #include "project_interface.h"
 #include "task_interface.h"
+#include "../qtlib/project.h"
+#include "../qtlib/toutatis.h"
+#include "../qtlib/task.h"
 
 using namespace com::noughmad;
 using namespace com::noughmad::toutatis;
@@ -80,18 +83,14 @@ bool Client::parseArguments(const QStringList& arguments)
     return false;
 }
 
-ComNoughmadToutatisProjectInterface* Client::getProject(const QString& name)
+Project* Client::getProject(const QString& name)
 {
     if (name.isEmpty())
     {
         return 0;
     }
 
-    Project* project = new Project(
-        "com.noughmad.Toutatis",
-        "/Project/" + name,
-        QDBusConnection::sessionBus(),
-        this);
+    Project* project = new Project(name, this);
 
     if (project->isValid())
     {
@@ -101,12 +100,7 @@ ComNoughmadToutatisProjectInterface* Client::getProject(const QString& name)
     QString id = mDaemon->findProject(name).value();
     if (!id.isEmpty())
     {
-        project = new Project(
-            "com.noughmad.Toutatis",
-            "/Project/" + id,
-            QDBusConnection::sessionBus(),
-            this);
-
+        project = new Project(id, this);
         return project->isValid() ? project : 0;
     }
 
@@ -120,11 +114,7 @@ ComNoughmadToutatisTaskInterface* Client::getTask(const QString& name, const QSt
         return 0;
     }
 
-    Task* task = new Task(
-        "com.noughmad.Toutatis",
-        "/Task/" + name,
-        QDBusConnection::sessionBus(),
-        this);
+    Task* task = new Task(name, this);
 
     if (task->isValid())
     {
@@ -139,12 +129,7 @@ ComNoughmadToutatisTaskInterface* Client::getTask(const QString& name, const QSt
     QString id = mDaemon->findTask(project, name).value();
     if (!id.isEmpty())
     {
-        task = new Task(
-            "com.noughmad.Toutatis",
-            "/Task/" + id,
-            QDBusConnection::sessionBus(),
-            this);
-
+        task = new Task(id, this);
         return task->isValid() ? task : 0;
     }
 

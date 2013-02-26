@@ -3,9 +3,9 @@
 
 #include <QObject>
 
-class ComNoughmadToutatisProjectInterface;
-class ComNoughmadToutatisTaskInterface;
-class ComNoughmadToutatisInterface;
+class Task;
+class Project;
+class Toutatis;
 
 class Client : public QObject
 {
@@ -16,11 +16,11 @@ public:
     bool parseArguments(const QStringList& arguments);
 
 private:
-    ComNoughmadToutatisProjectInterface* getProject(const QString& name);
-    ComNoughmadToutatisTaskInterface* getTask(const QString& name, const QString& project);
+    Project* getProject(const QString& name);
+    Task* getTask(const QString& name, const QString& project);
 
 private:
-    ComNoughmadToutatisInterface* mDaemon;
+    Toutatis* mDaemon;
 };
 
 #endif // CLIENT_H

@@ -36,8 +36,8 @@ Task::Task(const QString& id, QObject* parent)
 , d_ptr(new TaskPrivate)
 {
     Q_D(Task);
-    d->project = qobject_cast<Project*>(parent);
-    Q_ASSERT(d->project);
+    d->project = getOrCreateModel<Project>(parent, projectId(), this);
+    Q_ASSERT(d->project->isValid());
     
     connect (this, SIGNAL(eventIdsChanged()), SLOT(updateEvents()));
     connect (this, SIGNAL(noteIdsChanged()), SLOT(updateNotes()));

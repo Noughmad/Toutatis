@@ -32,8 +32,8 @@ Event::Event(const QString& id, QObject* parent)
 , d_ptr(new EventPrivate)
 {
     Q_D(Event);
-    d->task = qobject_cast< Task* >(parent);
-    Q_ASSERT(d->task);
+    d->task = getOrCreateModel<Task>(parent, taskId(), this);
+    Q_ASSERT(d->task->isValid());
 }
 
 Event::~Event()
