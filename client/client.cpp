@@ -6,9 +6,6 @@
 #include "../qtlib/toutatis.h"
 #include "../qtlib/task.h"
 
-using namespace com::noughmad;
-using namespace com::noughmad::toutatis;
-
 class Arguments
 {
 public:
@@ -60,11 +57,7 @@ Arguments::Arguments(QStringList& args)
 
 Client::Client(QObject* parent) : QObject(parent)
 {
-    mDaemon = new Toutatis(
-        "com.noughmad.Toutatis",
-        "/Toutatis",
-        QDBusConnection::sessionBus(),
-        this);
+    mDaemon = new Toutatis(this);
 }
 
 Client::~Client()
@@ -107,7 +100,7 @@ Project* Client::getProject(const QString& name)
     return 0;
 }
 
-ComNoughmadToutatisTaskInterface* Client::getTask(const QString& name, const QString& project)
+Task* Client::getTask(const QString& name, const QString& project)
 {
     if (name.isEmpty())
     {

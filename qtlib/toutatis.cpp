@@ -11,7 +11,7 @@ public:
 };
 
 Toutatis::Toutatis(QObject* parent)
-: com::noughmad::Toutatis("com.noughmad.Toutatis", "/Toutatis", QDBusConnection::sessionBus(), parent)
+: com::noughmad::Toutatis(Service, "/Toutatis", QDBusConnection::sessionBus(), parent)
 , d_ptr(new ToutatisPrivate)
 {
     connect(this, SIGNAL(projectIdsChanged()), SLOT(updateProjects()));
@@ -20,6 +20,12 @@ Toutatis::Toutatis(QObject* parent)
 Toutatis::~Toutatis()
 {
     delete d_ptr;
+}
+
+QList< Project* > Toutatis::projects() const
+{
+    Q_D(const Toutatis);
+    return d->projects;
 }
 
 void Toutatis::updateProjects()

@@ -16,7 +16,7 @@ public:
     explicit Toutatis(QObject* parent = 0);
     virtual ~Toutatis();
 
-    QList<Project*> projects();
+    QList<Project*> projects() const;
 
 public Q_SLOTS:
     void updateProjects();

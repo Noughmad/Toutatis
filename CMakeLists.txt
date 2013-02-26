@@ -7,6 +7,6 @@ set(CMAKE_AUTOMOC TRUE)
 include(cmake/DBusMacros.cmake)
 
 add_subdirectory(daemon)
-# add_subdirectory(client)
+add_subdirectory(client)
 add_subdirectory(git)
 add_subdirectory(qtlib)
