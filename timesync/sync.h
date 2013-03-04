@@ -23,11 +23,20 @@
 class QDomElement;
 class QDomDocument;
 
+namespace TimeSync
+{
+
+class IStorage;
+
 namespace Sync
 {
+    void merge(IStorage* one, IStorage* other);
+
     void merge(QDomDocument& one, const QDomDocument& other);
     QDomElement mergeObject(const QDomElement& one, const QDomElement& other);
     void mergeProperty(QDomElement& one, const QDomElement& other);
-};
+}
+
+}
 
 #endif // SYNC_H
