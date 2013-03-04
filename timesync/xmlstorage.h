@@ -34,9 +34,9 @@ public:
     XmlStorage(const QString& fileName);
     virtual ~XmlStorage();
 
+    virtual void syncObject(Object* object);
     virtual QDomDocument loadHierarchy();
-    virtual TimeSync::Object* loadObject(const QString& type, const QString& id);
-    virtual bool saveObject(TimeSync::Object* object);
+    virtual void saveHierarchy(const QDomDocument& objects);
 
 protected:
     virtual void registerType(const QMetaObject& metaObject);

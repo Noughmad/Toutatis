@@ -31,10 +31,9 @@ class IStorage
 public:
     virtual ~IStorage();
 
-    // TODO: Maybe save and load should by combined into a single method that synchronizes the storage and the object
-    virtual bool saveObject(Object* object) = 0;
-    virtual Object* loadObject(const QString& type, const QString& id) = 0;
+    virtual void syncObject(Object* object) = 0;
     virtual QDomDocument loadHierarchy() = 0;
+    virtual void saveHierarchy(const QDomDocument& objects) = 0;
 
     template <class T> void registerType();
 

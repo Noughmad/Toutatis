@@ -22,8 +22,10 @@
 
 #include <QDomDocument>
 #include <QDomElement>
+#include <QDebug>
 #include <QFile>
-#include <qt4/QtXml/qdom.h>
+#include <QVariant>
+#include <QDateTime>
 
 using namespace TimeSync;
 
@@ -80,12 +82,7 @@ void XmlStorage::registerType(const QMetaObject& metaObject)
     Q_UNUSED(metaObject);
 }
 
-Object* XmlStorage::loadObject(const QString& type, const QString& id)
-{
-
-}
-
-bool XmlStorage::saveObject(TimeSync::Object* object)
+void XmlStorage::syncObject(TimeSync::Object* object)
 {
     Q_D(XmlStorage);
     QString tag = object->metaObject()->className();
@@ -103,6 +100,40 @@ bool XmlStorage::saveObject(TimeSync::Object* object)
 
     for (QDomElement property = element.firstChildElement("property"); property != element.lastChildElement("property"); property = property.nextSiblingElement("property"))
     {
-        // TODO: Update the values here
+        QByteArray propertyName = property.attribute("name").toLatin1();
+        qlonglong storageStamp = property.attribute("timestamp").toLongLong();
+        qlonglong objectStamp = object->property(propertyName + "_timestamp").toLongLong();
+
+        if (storageStamp > objectStamp)
+        {
+            object->setProperty(propertyName, property.attribute("value"));
+        }
+        else
+        {
+            switch (object->property(propertyName).type())
+            {
+                case QVariant::String:
+                    property.setAttribute("value", object->property(propertyName).toString());
+                    break;
+                case QVariant::Int:
+                case QVariant::UInt:
+                case QVariant::LongLong:
+                case QVariant::ULongLong:
+                    property.setAttribute("value", object->property(propertyName).toLongLong());
+                    break;
+                case QVariant::Double:
+                    property.setAttribute("value", object->property(propertyName).toDouble());
+                    break;
+                case QVariant::Date:
+                case QVariant::DateTime:
+                case QVariant::Time:
+                    property.setAttribute("value", object->property(propertyName).toDateTime().toMSecsSinceEpoch());
+                    break;
+                default:
+                    qWarning() << "Unknown type:" << propertyName << object->property(propertyName);
+                    break;
+            }
+            property.setAttribute("timestamp", objectStamp);
+        }
     }
 }
