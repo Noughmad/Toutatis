@@ -1,6 +1,6 @@
 include_directories(${QT_INCLUDES} ${CMAKE_CURRENT_SOURCE_DIR} ${CMAKE_CURRENT_BINARY_DIR})
 
-set(TimeSync_SRCS xmlstorage.cpp
+set(TimeSync_SRCS sync.cpp xmlstorage.cpp
     istorage.cpp
     object.cpp
     binding.cpp

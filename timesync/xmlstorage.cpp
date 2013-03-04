@@ -77,6 +77,12 @@ QDomDocument XmlStorage::loadHierarchy()
     return d->document;
 }
 
+void XmlStorage::saveHierarchy(const QDomDocument& objects)
+{
+    Q_D(XmlStorage);
+    d->document = objects;
+}
+
 void XmlStorage::registerType(const QMetaObject& metaObject)
 {
     Q_UNUSED(metaObject);
@@ -98,9 +104,13 @@ void XmlStorage::syncObject(TimeSync::Object* object)
 
     Q_ASSERT(!element.isNull());
 
+    QList<QByteArray> propertyNames;
+
     for (QDomElement property = element.firstChildElement("property"); property != element.lastChildElement("property"); property = property.nextSiblingElement("property"))
     {
         QByteArray propertyName = property.attribute("name").toLatin1();
+        propertyNames << propertyName;
+
         qlonglong storageStamp = property.attribute("timestamp").toLongLong();
         qlonglong objectStamp = object->property(propertyName + "_timestamp").toLongLong();
 
@@ -135,5 +145,10 @@ void XmlStorage::syncObject(TimeSync::Object* object)
             }
             property.setAttribute("timestamp", objectStamp);
         }
+    }
+
+    for (int i = object->metaObject()->propertyOffset(); i < object->metaObject()->propertyCount(); ++i)
+    {
+        
     }
 }
