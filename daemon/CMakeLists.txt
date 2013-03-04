@@ -12,15 +12,14 @@ set(Toutatis_daemon_SRCS
     main.cpp
 )
 
-qt4_automoc(${Toutatis_daemon_SRCS})
-qt4_add_dbus_adaptor(Toutatis_daemon_SRCS ../com.noughmad.Toutatis.xml toutatis.h Toutatis)
-qt4_add_dbus_adaptor(Toutatis_daemon_SRCS ../com.noughmad.toutatis.Project.xml project.h Project)
-qt4_add_dbus_adaptor(Toutatis_daemon_SRCS ../com.noughmad.toutatis.Task.xml task.h Task)
-qt4_add_dbus_adaptor(Toutatis_daemon_SRCS ../com.noughmad.toutatis.Event.xml event.h Event)
-qt4_add_dbus_adaptor(Toutatis_daemon_SRCS ../com.noughmad.toutatis.Note.xml note.h Note)
+qt5_add_dbus_adaptor(Toutatis_daemon_SRCS ../com.noughmad.Toutatis.xml toutatis.h Toutatis)
+qt5_add_dbus_adaptor(Toutatis_daemon_SRCS ../com.noughmad.toutatis.Project.xml project.h Project)
+qt5_add_dbus_adaptor(Toutatis_daemon_SRCS ../com.noughmad.toutatis.Task.xml task.h Task)
+qt5_add_dbus_adaptor(Toutatis_daemon_SRCS ../com.noughmad.toutatis.Event.xml event.h Event)
+qt5_add_dbus_adaptor(Toutatis_daemon_SRCS ../com.noughmad.toutatis.Note.xml note.h Note)
 dbus_add_activation_service(com.noughmad.Toutatis.service.in)
 
 add_executable(toutatisd ${Toutatis_daemon_SRCS})
-target_link_libraries(toutatisd ${QT_QTCORE_LIBRARY} ${QT_QTSQL_LIBRARY} ${QT_QTDBUS_LIBRARY})
+target_link_libraries(toutatisd ${Qt5Core_LIBRARIES} ${Qt5DBus_LIBRARIES} ${Qt5Sql_LIBRARIES})
 
 install(TARGETS toutatisd RUNTIME DESTINATION bin)

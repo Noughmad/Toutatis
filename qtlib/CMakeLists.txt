@@ -9,16 +9,14 @@ set(Toutatis_qtlib_SRCS
    # tasktreemodel.cpp
 )
 
-qt4_automoc(${Toutatis_qtlib_SRCS})
-
-qt4_add_dbus_interface(Toutatis_qtlib_SRCS ../com.noughmad.Toutatis.xml toutatis_interface)
-qt4_add_dbus_interface(Toutatis_qtlib_SRCS ../com.noughmad.toutatis.Project.xml project_interface)
-qt4_add_dbus_interface(Toutatis_qtlib_SRCS ../com.noughmad.toutatis.Task.xml task_interface)
-qt4_add_dbus_interface(Toutatis_qtlib_SRCS ../com.noughmad.toutatis.Event.xml event_interface)
-qt4_add_dbus_interface(Toutatis_qtlib_SRCS ../com.noughmad.toutatis.Note.xml note_interface)
+qt5_add_dbus_interface(Toutatis_qtlib_SRCS ../com.noughmad.Toutatis.xml toutatis_interface)
+qt5_add_dbus_interface(Toutatis_qtlib_SRCS ../com.noughmad.toutatis.Project.xml project_interface)
+qt5_add_dbus_interface(Toutatis_qtlib_SRCS ../com.noughmad.toutatis.Task.xml task_interface)
+qt5_add_dbus_interface(Toutatis_qtlib_SRCS ../com.noughmad.toutatis.Event.xml event_interface)
+qt5_add_dbus_interface(Toutatis_qtlib_SRCS ../com.noughmad.toutatis.Note.xml note_interface)
 
 add_library(qtatis SHARED ${Toutatis_qtlib_SRCS})
-target_link_libraries(qtatis ${QT_QTCORE_LIBRARY} ${QT_QTDBUS_LIBRARY})
+target_link_libraries(qtatis ${Qt5Core_LIBRARIES} ${Qt5DBus_LIBRARIES})
 
 install(TARGETS qtatis RUNTIME DESTINATION bin LIBRARY DESTINATION lib)
 
