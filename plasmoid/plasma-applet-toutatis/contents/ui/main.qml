@@ -1,5 +1,6 @@
 import QtQuick 1.0
 import org.kde.plasma.core 0.1 as PlasmaCore
+import org.kde.plasma.components 0.1 as PlasmaComponents
 
 Item {
     PlasmaCore.DataSource {
@@ -8,22 +9,44 @@ Item {
         connectedSources: ["Projects"]
         interval: 500
         
-        onNewData:{
+        onNewData: {
             if (sourceName== "Projects") {
-                listView.model = data.names
+                projects.model = data.names
             }
         }
     }
+    
+    Row {
+        spacing: 10
+        anchors.fill: parent
 
-    ListView {
-        id: listView
-        width: parent.width
-        height: parent.height
+        ListView {
+            id: projects
+            width: parent.width / 3
+            height: parent.height
+            
+            delegate: PlasmaComponents.ListItem {
+                width: parent.width
+                height: 30
+                
+                Text {
+                    anchors.fill: parent
+                    text: modelData
+                }
+            }
+        }
         
-        delegate: Text {
-            width: parent.width
-            height: 30
-            text: modelData
+        ListView {
+            id: tasks
+            width: parent.width * 2 / 3
+            height: parent.height
+            
+            delegate: PlasmaComponents.ListItem {
+                Text {
+                    anchors.fill: parent
+                    text: modelData
+                }
+            }
         }
     }
 }
