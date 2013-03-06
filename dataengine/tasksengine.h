@@ -37,4 +37,6 @@ private:
     Toutatis mDaemon;
 };
 
+Q_DECLARE_METATYPE(QObjectList)
+
 #endif // TASKSENGINE_H

@@ -40,12 +40,15 @@ bool TasksEngine::updateSourceEvent(const QString& source)
     if (source == "Projects")
     {
         QStringList projects;
+        QObjectList objects;
         foreach (Project* p, mDaemon.projects())
         {
             projects << p->name();
+            objects << p;
         }
         setData(source, "ids", mDaemon.projectIds());
         setData(source, "names", projects);
+        setData(source, "projects", QVariant::fromValue(objects));
         return true;
     }
     else if (source.startsWith("Project/"))

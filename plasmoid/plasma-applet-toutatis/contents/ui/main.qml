@@ -12,7 +12,8 @@ Item {
         
         onNewData: {
             if (sourceName== "Projects") {
-                projects.model = data.names
+                projects.model = data.projects
+                console.log(data.projects)
             }
         }
     }
@@ -33,6 +34,11 @@ Item {
                 Text {
                     anchors.fill: parent
                     text: modelData
+                    
+                    Component.onCompleted: {
+                        console.log(modelData)
+                        console.log(modelData.name)
+                    }
                 }
             }
         }
