@@ -1,2 +1,2 @@
-module Toutatis
+module com.noughmad.toutatis
 plugin qmltoutatisplugin

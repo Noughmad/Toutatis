@@ -18,8 +18,22 @@
 
 
 #include "toutatisplugin.h"
+#include "project.h"
+#include "task.h"
+#include "note.h"
+#include "event.h"
+
+#include <QtDeclarative/QDeclarativeEngine>
+#include <QtDeclarative/QtDeclarative>
+
 
 void ToutatisPlugin::registerTypes(const char* uri)
 {
-    
+    const QString reason = "Only for DataEngine";
+    qmlRegisterUncreatableType<Project>(uri, 1, 0, "Project", reason);
+    qmlRegisterUncreatableType<Task>(uri, 1, 0, "Task", reason);
+    qmlRegisterUncreatableType<Event>(uri, 1, 0, "Event", reason);
+    qmlRegisterUncreatableType<Note>(uri, 1, 0, "Note", reason);
 }
+
+Q_EXPORT_PLUGIN2(qmltoutatisplugin, ToutatisPlugin);

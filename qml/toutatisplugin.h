@@ -24,6 +24,8 @@
 
 class ToutatisPlugin : public QDeclarativeExtensionPlugin
 {
+    Q_OBJECT
+
     virtual void registerTypes(const char* uri);
 };
 
