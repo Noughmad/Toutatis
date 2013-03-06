@@ -1,5 +1,4 @@
 #include "utils.h"
-#include "model.h"
 
 #include <QStringList>
 #include <QVariant>
@@ -7,6 +6,7 @@
 #include <QJsonObject>
 #include <QMetaProperty>
 #include <QJsonDocument>
+#include <QDebug>
 
 QStringList Utils::stringList(QSqlQuery& query)
 {
@@ -28,6 +28,28 @@ QStringList Utils::propertyNames(const QMetaObject& meta)
     return names;
 }
 
+QJsonArray Utils::serializeType(const QMetaObject& meta, qlonglong timestamp)
+{
+    QString className = meta.className();
+    QStringList properties;
+    properties << "_id" << "modified" << "deleted";
+    properties << propertyNames(meta);
+    
+    QSqlQuery query;
+    query.prepare(QString("SELECT %1 FROM %2 WHERE modified>:timestamp OR deleted>:timestamp").arg(properties.join(",")).arg(className));
+    query.bindValue(":timestamp", timestamp);
+    query.exec();
+    
+    QJsonArray array;
+    while (query.next())
+    {
+        array.append(serializeObject(properties, query));
+    }
+    
+    return array;
+}
+
+
 QJsonObject Utils::serializeObject(const QStringList& properties, const QSqlQuery& query)
 {
     QVariantMap map;
@@ -40,43 +62,3 @@ QJsonObject Utils::serializeObject(const QStringList& properties, const QSqlQuer
     return QJsonObject::fromVariantMap(map);
 }
 
-void Utils::deserialize(const QByteArray& data, qlonglong timestamp)
-{
-    QJsonArray array = QJsonDocument::fromJson(data).array();
-    
-    foreach (const QJsonValue& value, array)
-    {
-        if (!value.isObject())
-        {
-            continue;
-        }
-        
-        QJsonObject obj = value.toObject();
-        QString id = obj["id"].toString();
-        QString className = obj["class"].toString();
-        
-        Model* model = Model::findObject(id);
-        if (!model)
-        {
-            // TODO: Create a new model of the appropriate class
-        }
-        
-        Q_ASSERT(model);
-        
-        if (obj.contains("deleted") && obj["deleted"].toDouble() > timestamp)
-        {
-            model->remove();
-        }
-        
-        for (auto it = obj.constBegin(); it != obj.constEnd(); ++it)
-        {
-            QString key = it.key();
-            if (key != "id" && key != "class")
-            {
-                model->setProperty(key.toLatin1(), it.value().toVariant());
-            }
-        }
-        
-        // TODO: Again, handle remote deletions
-    }
-}

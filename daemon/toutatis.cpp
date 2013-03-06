@@ -259,7 +259,12 @@ void Toutatis::synchronize(const QUrl& destination)
     QNetworkReply* reply = manager.post(request, doc.toJson());
 
     connect (reply, &QNetworkReply::finished, [=] {
-        Utils::deserialize(reply->readAll(), lastSync);
+        QJsonObject object = QJsonDocument::fromJson(reply->readAll()).object();
+        Utils::deserialize<Project>(object["Project"].toArray(), lastSync);
+        Utils::deserialize<Task>(object["Task"].toArray(), lastSync);
+        Utils::deserialize<Event>(object["Event"].toArray(), lastSync);
+        Utils::deserialize<Note>(object["Note"].toArray(), lastSync);
+        
         QSqlQuery sync;
         sync.prepare("INSERT INTO Sync (time, destination) VALUES (:timestamp, :url)");
         sync.bindValue(":timestamp", timestamp);

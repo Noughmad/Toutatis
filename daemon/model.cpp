@@ -159,6 +159,17 @@ void Model::createTable(const QMetaObject& meta)
     query.exec(sql);
 }
 
+void Model::create()
+{
+    QSqlQuery query;
+    query.prepare(QString("INSERT INTO %1 (_id, created, modified) VALUES (:id, :timestamp, :timestamp)").arg(mTableName));
+    query.bindValue(":id", mId);
+    query.bindValue(":timestamp", QDateTime::currentMSecsSinceEpoch());
+    
+    bool ok = query.exec();
+    Q_ASSERT(ok);
+}
+
 void Model::setupId(const QString& id)
 {
     mId = id;
@@ -171,15 +182,20 @@ void Model::setupId(const QString& id)
         mId.remove(0, 1);
         mId.replace(QRegExp("[^A-Za-z0-9]"), "_");
      
-        qDebug() << "Creating a" << mTableName;
-        
+        create();
+    }
+    else
+    {
         QSqlQuery query;
-        query.prepare(QString("INSERT INTO %1 (_id, created, modified) VALUES (:id, :timestamp, :timestamp)").arg(mTableName));
+        query.prepare(QString("SELECT COUNT(*) FROM %1 WHERE _id=:id").arg(mTableName));
         query.bindValue(":id", mId);
-        query.bindValue(":timestamp", QDateTime::currentMSecsSinceEpoch());
+        query.exec();
+        query.next();
         
-        bool ok = query.exec();
-        Q_ASSERT(ok);
+        if (query.value(0).toInt() == 0)
+        {
+            create();
+        }
     }
     
     registerObject(this);

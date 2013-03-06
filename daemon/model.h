@@ -85,6 +85,7 @@ protected:
 private:
     static void createTable(const QMetaObject& meta);
     void setupId(const QString& id);
+    void create();
 
 private:
     QString mTableName;
