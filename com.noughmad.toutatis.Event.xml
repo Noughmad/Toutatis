@@ -5,6 +5,7 @@
     <property name="taskId" type="s" access="readwrite"/>
     <property name="type" type="s" access="readwrite"/>
     <property name="message" type="s" access="readwrite"/>
+    <property name="location" type="s" access="readwrite"/>
     <property name="start" type="((iii)(iiii)i)" access="readwrite">
       <annotation name="org.qtproject.QtDBus.QtTypeName" value="QDateTime"/>
     </property>
@@ -20,6 +21,9 @@
     </signal>
     <signal name="messageChanged">
       <arg name="message" type="s" direction="out"/>
+    </signal>
+    <signal name="locationChanged">
+      <arg name="location" type="s" direction="out"/>
     </signal>
     <signal name="timeChanged">
     </signal>
