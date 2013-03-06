@@ -3,6 +3,8 @@
 #include "project.h"
 #include "task.h"
 #include "utils.h"
+#include "note.h"
+#include "event.h"
 
 #include <QSqlDatabase>
 #include <QSqlQuery>
@@ -71,15 +73,24 @@ Toutatis::~Toutatis()
 
 void Toutatis::createTables()
 {
+    Model::createTable<Project>();
+    Model::createTable<Task>();
+    Model::createTable<Event>();
+    Model::createTable<Note>();
+    /*
     QSqlQuery query;
     query.exec("CREATE TABLE projects "
         "(_id TEXT PRIMARY KEY, "
+        "created INTEGER, "
+        "modified INTEGER, "
         "name TEXT, "
         "client TEXT, "
-        "visible INTEGER DEFAULT 1);");
+        "visible INTEGER DEFAULT 1,);");
 
     query.exec("CREATE TABLE tasks "
         "(_id TEXT PRIMARY KEY, "
+        "created INTEGER, "
+        "modified INTEGER, "
         "project INTEGER REFERENCES projects(_id), "
         "name TEXT, "
         "active INTEGER DEFAULT 0, "
@@ -88,6 +99,8 @@ void Toutatis::createTables()
 
     query.exec("CREATE TABLE events "
         "(_id TEXT PRIMARY KEY, "
+        "created INTEGER, "
+        "modified INTEGER, "
         "task INTEGER REFERENCES tasks(_id), "
         "type TEXT, "
         "start INTEGER, "
@@ -96,9 +109,12 @@ void Toutatis::createTables()
 
     query.exec("CREATE TABLE notes "
         "(_id TEXT PRIMARY KEY, "
+        "created INTEGER, "
+        "modified INTEGER, "
         "task INTEGER REFERENCES tasks(_id), "
         "title TEXT, "
         "content TEXT);");
+        */
 }
 
 QStringList Toutatis::projectIds() const

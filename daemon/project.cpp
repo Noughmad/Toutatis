@@ -8,13 +8,13 @@
 #include <QDBusConnection>
 
 Project::Project(const QString& id, QObject* parent)
-: Model("projects", id, parent)
+: Model(id, parent)
 {
     init();
 }
 
 Project::Project(QObject* parent)
-: Model("projects", parent)
+: Model(parent)
 {
     init();
 }
@@ -35,7 +35,7 @@ void Project::init()
 
 Project::~Project()
 {
-    qDebug() << "Deleting project" << id();
+
 }
 
 T_DEF_STRING_FIELD(Project, name, Name)

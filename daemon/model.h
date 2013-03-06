@@ -21,6 +21,8 @@
 #define MODEL_H
 
 #include <QObject>
+#include <QHash>
+#include <QSqlQuery>
 
 #define T_REF_FIELD(type, name, upperName)      \
 type name() const;                              \
@@ -49,7 +51,7 @@ class Model : public QObject
     Q_PROPERTY(QString id READ id)
 
 public:
-    explicit Model(const QString& tableName, const QString& id, QObject* parent = 0);
+    explicit Model(QObject* parent = 0);
     explicit Model(const QString& tableName, QObject* parent = 0);
     virtual ~Model();
 
@@ -60,7 +62,12 @@ public:
 
     static void registerObject(Model* object);
     static Model* findObject(const QString& id);
-
+    
+    static QHash<QString,Model*> allObjects();
+    
+    template <class T>
+    static void createTable();
+    
 public slots:
     void remove();
 
@@ -71,6 +78,9 @@ protected:
     void saveField(const QString& field, const QVariant& value);
     QVariant getField(const QString& field) const;
     QStringList getList(const QString& table, const QString& key) const;
+    
+private:
+    static void createTable(const QMetaObject& meta);
 
 private:
     QString mTableName;
@@ -81,6 +91,12 @@ template <class T>
 T* Model::findObject(const QString& id)
 {
     return qobject_cast<T*>(findObject(id));
+}
+
+template <class T>
+void Model::createTable()
+{
+    createTable(T::staticMetaObject);
 }
 
 

@@ -16,4 +16,4 @@ add_subdirectory(daemon)
 add_subdirectory(client)
 add_subdirectory(git)
 add_subdirectory(qtlib)
-add_subdirectory(timesync)
+

@@ -22,13 +22,13 @@
 
 #include <QVariant>
 
-Note::Note(Task* parent): Model("notes", parent)
+Note::Note(Task* parent): Model(parent)
 {
     setTaskId(parent->id());
     init();
 }
 
-Note::Note(const QString& id, Task* parent): Model("notes", id, parent)
+Note::Note(const QString& id, Task* parent): Model(id, parent)
 {
     setTaskId(parent->id());
     init();
@@ -36,14 +36,14 @@ Note::Note(const QString& id, Task* parent): Model("notes", id, parent)
 
 Note::~Note()
 {
-    new NoteAdaptor(this);
-    QDBusConnection dbus = QDBusConnection::sessionBus();
-    dbus.registerObject("/Note/" + id(), this);
+
 }
 
 void Note::init()
 {
-    
+    new NoteAdaptor(this);
+    QDBusConnection dbus = QDBusConnection::sessionBus();
+    dbus.registerObject("/Note/" + id(), this);    
 }
 
 T_DEF_STRING_FIELD(Note, taskId, TaskId)

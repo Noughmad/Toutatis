@@ -23,13 +23,13 @@
 
 #include <QVariant>
 
-Event::Event(const QString& id, Task* parent): Model("events", id, parent)
+Event::Event(const QString& id, Task* parent): Model(id, parent)
 {
     setTaskId(parent->id());
     init();
 }
 
-Event::Event(Task* parent): Model("events", parent)
+Event::Event(Task* parent): Model(parent)
 {
     setTaskId(parent->id());
     init();

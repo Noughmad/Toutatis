@@ -24,28 +24,32 @@
 #include <QStringList>
 #include <QSqlQuery>
 #include <QSqlError>
+#include <QDateTime>
+#include <QMetaProperty>
 #include <QDebug>
 
 class ObjectStore
 {
 public:
-    QMap<QString, Model*> objects;
+    QHash<QString, Model*> objects;
 };
 
 Q_GLOBAL_STATIC(ObjectStore, store)
 
-Model::Model(const QString& tableName, QObject* parent)
+Model::Model(QObject* parent)
 : QObject(parent)
-, mTableName(tableName)
 {
     mId = QUuid::createUuid().toString();
     mId.remove(mId.size()-1, 1);
     mId.remove(0, 1);
     mId.replace(QRegExp("[^A-Za-z0-9]"), "_");
+    
+    mTableName = metaObject()->className();
 
     QSqlQuery query;
-    query.prepare("INSERT INTO " + mTableName + " (_id) VALUES (:id)");
+    query.prepare("INSERT INTO " + mTableName + " (_id, created, modified) VALUES (:id, :timestamp, :timestamp)");
     query.bindValue(":id", mId);
+    query.bindValue(":timestamp", QDateTime::currentMSecsSinceEpoch());
 
     bool ok = query.exec();
     Q_ASSERT(ok);
@@ -53,11 +57,11 @@ Model::Model(const QString& tableName, QObject* parent)
     registerObject(this);
 }
 
-Model::Model(const QString& tableName, const QString& id, QObject* parent)
+Model::Model(const QString& id, QObject* parent)
 : QObject(parent)
-, mTableName(tableName)
 , mId(id)
 {
+    mTableName = metaObject()->className();
     registerObject(this);
 }
 
@@ -100,8 +104,9 @@ QVariant Model::getField(const QString& field) const
 void Model::saveField(const QString& field, const QVariant& value)
 {
     QSqlQuery query;
-    query.prepare("UPDATE " + mTableName + " SET " + field + "=:value WHERE _id=:id");
+    query.prepare("UPDATE " + mTableName + " SET " + field + "=:value, modified=:timestamp WHERE _id=:id");
     query.bindValue(":value", value);
+    query.bindValue(":timestamp", QDateTime::currentMSecsSinceEpoch());
     query.bindValue(":id", mId);
     query.exec();
 }
@@ -132,4 +137,46 @@ void Model::registerObject(Model* object)
 Model* Model::findObject(const QString& id)
 {
     return store()->objects.value(id, 0);
+}
+
+QHash< QString, Model* > Model::allObjects()
+{
+    return store()->objects;
+}
+
+void Model::createTable(const QMetaObject& meta)
+{
+    QString sql = QString("CREATE TABLE %1 (_id TEXT PRIMARY KEY, created INTEGER, modified INTEGER, deleted INTEGER").arg(meta.className());
+    for (int i = meta.propertyOffset(); i < meta.propertyCount(); ++i)
+    {
+        QMetaProperty p = meta.property(i);
+        QString sqlType;
+        switch (p.type())
+        {
+            case QVariant::String:
+            case QVariant::Char:
+                sqlType = "TEXT";
+                break;
+            case QVariant::Int:
+            case QVariant::LongLong:
+            case QVariant::UInt:
+            case QVariant::ULongLong:
+            case QVariant::DateTime:
+            case QVariant::Bool:
+                sqlType = "INTEGER";
+                break;
+            case QVariant::Double:
+                sqlType = "REAL";
+                break;
+                
+            default:
+                qWarning() << "Unsupported field type" << p.type();
+                continue;
+        }
+        sql += QString(", %1 %2").arg(p.name()).arg(sqlType);
+    }
+    sql += ");";
+
+    QSqlQuery query;
+    query.exec(sql);
 }

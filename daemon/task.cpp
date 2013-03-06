@@ -10,13 +10,13 @@
 #include <QVariant>
 #include <QDBusConnection>
 
-Task::Task(const QString& id, Project* parent) : Model("tasks", id, parent)
+Task::Task(const QString& id, Project* parent) : Model(id, parent)
 {
     setProjectId(parent->id());
     init();
 }
 
-Task::Task(Project* parent) : Model("tasks", parent)
+Task::Task(Project* parent) : Model(parent)
 {
     setProjectId(parent->id());
     init();
