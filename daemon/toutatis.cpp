@@ -120,7 +120,7 @@ void Toutatis::createTables()
 QStringList Toutatis::projectIds() const
 {
     QSqlQuery query;
-    query.prepare("SELECT _id FROM projects WHERE visible = 1;");
+    query.prepare("SELECT _id FROM Project WHERE deleted IS NULL");
     query.exec();
 
     return Utils::stringList(query);
@@ -146,7 +146,7 @@ void Toutatis::startTracking(const QString& id)
     stopTracking();
 
     QSqlQuery query;
-    query.prepare("UPDATE tasks SET active=1, lastStart=:start "
+    query.prepare("UPDATE Task SET active=1, lastStart=:start "
     "WHERE _id=:id;");
     query.bindValue(":id", id);
     query.bindValue(":start", QDateTime::currentDateTime());
@@ -200,7 +200,7 @@ void Toutatis::stopTracking()
 
     QDateTime start;
     QSqlQuery select;
-    select.exec("SELECT lastStart FROM tasks WHERE active=1;");
+    select.exec("SELECT lastStart FROM Task WHERE active=1;");
 
     if (select.next())
     {
@@ -212,7 +212,7 @@ void Toutatis::stopTracking()
     task->addEvent("TimeTracking", start, QDateTime::currentDateTime(), QDateTime::currentDateTime().toString());
 
     QSqlQuery query;
-    query.prepare("UPDATE tasks SET active=0, lastStart=0 WHERE active=1;");
+    query.prepare("UPDATE Task SET active=0, lastStart=0 WHERE active=1;");
     query.exec();
 
     mCurrentTask = QString();
@@ -222,7 +222,7 @@ void Toutatis::stopTracking()
 QString Toutatis::findProject(const QString& name)
 {
     QSqlQuery query;
-    query.prepare("SELECT _id FROM projects WHERE name=:name;");
+    query.prepare("SELECT _id FROM Project WHERE name=:name;");
     query.bindValue(":name", name);
     query.exec();
 
@@ -239,8 +239,8 @@ QString Toutatis::findProject(const QString& name)
 QString Toutatis::findTask(const QString& project, const QString& task)
 {
     QSqlQuery query;
-    query.prepare("SELECT _id FROM tasks WHERE name=:task AND "
-        "project IN (SELECT _id FROM projects WHERE name=:project);");
+    query.prepare("SELECT _id FROM Task WHERE name=:task AND "
+        "project IN (SELECT _id FROM Project WHERE name=:project);");
     query.bindValue(":project", project);
     query.bindValue(":task", task);
     query.exec();

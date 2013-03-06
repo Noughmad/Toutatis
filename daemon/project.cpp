@@ -8,24 +8,22 @@
 #include <QDBusConnection>
 
 Project::Project(const QString& id, QObject* parent)
-: Model(id, parent)
+: Model(parent)
 {
-    init();
+    initialize<Project, ProjectAdaptor>(id);
+    
+    foreach (const QString& taskId, taskIds())
+    {
+        Task* t = new Task(taskId, this);
+        connect (t, SIGNAL(removed()), SIGNAL(taskIdsChanged()));
+    }
 }
 
 Project::Project(QObject* parent)
 : Model(parent)
 {
-    init();
-}
-
-void Project::init()
-{
-    new ProjectAdaptor(this);
-
-    QDBusConnection dbus = QDBusConnection::sessionBus();
-    bool ok = dbus.registerObject("/Project/" + id(), this);
-
+    initialize<Project, ProjectAdaptor>();
+    
     foreach (const QString& taskId, taskIds())
     {
         Task* t = new Task(taskId, this);
@@ -53,7 +51,7 @@ void Project::setVisible(bool visible)
 
 QStringList Project::taskIds() const
 {
-    return getList("tasks", "project");
+    return getList("Task", "projectId");
 }
 
 QString Project::createTask(const QString& task)
@@ -68,7 +66,7 @@ QString Project::createTask(const QString& task)
 QString Project::findTask(const QString& task)
 {
     QSqlQuery query;
-    query.prepare("SELECT _id FROM tasks WHERE project=:project AND name=:name");
+    query.prepare("SELECT _id FROM Task WHERE project=:project AND name=:name");
     query.bindValue(":project", id());
     query.bindValue(":name", task);
     query.exec();

@@ -23,6 +23,7 @@
 #include <QObject>
 #include <QHash>
 #include <QSqlQuery>
+#include <QDBusConnection>
 
 #define T_REF_FIELD(type, name, upperName)      \
 type name() const;                              \
@@ -38,12 +39,14 @@ void cls::set##upperName(const QString& name) {                 \
     emit name##Changed(name);                                   \
 }
 
-#define T_DEF_DATE_FIELD_X(cls, name, upperName, signalName)                \
-QDateTime cls::name() const {return getField(#name).toDateTime();}  \
-void cls::set##upperName(const QDateTime& name) {                 \
-    saveField(#name, name);                                     \
-    emit signalName();                                   \
+#define T_DEF_DATE_FIELD_X(cls, name, upperName, signalName)                                            \
+QDateTime cls::name() const {return QDateTime::fromMSecsSinceEpoch(getField(#name).toLongLong());}      \
+void cls::set##upperName(const QDateTime& name) {                                                       \
+    saveField(#name, name.toMSecsSinceEpoch());                                                         \
+    emit signalName();                                                                                  \
 }
+
+#define T_DEF_DATE_FIELD(csl, name, upperName) T_DEF_DATE_FIELD(cls, name, upperName, name##Changed)
 
 class Model : public QObject
 {
@@ -52,7 +55,6 @@ class Model : public QObject
 
 public:
     explicit Model(QObject* parent = 0);
-    explicit Model(const QString& tableName, QObject* parent = 0);
     virtual ~Model();
 
     QString id() const;
@@ -75,12 +77,14 @@ signals:
     void removed();
 
 protected:
+    template <class T, class Adaptor> void initialize(const QString& id = QString());
     void saveField(const QString& field, const QVariant& value);
     QVariant getField(const QString& field) const;
     QStringList getList(const QString& table, const QString& key) const;
     
 private:
     static void createTable(const QMetaObject& meta);
+    void setupId(const QString& id);
 
 private:
     QString mTableName;
@@ -98,6 +102,18 @@ void Model::createTable()
 {
     createTable(T::staticMetaObject);
 }
+
+template <class T, class Adaptor>
+void Model::initialize(const QString& id)
+{
+    setupId(id);
+    
+    new Adaptor(qobject_cast<T*>(this));
+    QDBusConnection dbus = QDBusConnection::sessionBus();
+    QString path = QString("/%1/%2").arg(mTableName).arg(mId);
+    dbus.registerObject(path, this);
+}
+
 
 
 #endif // MODEL_H

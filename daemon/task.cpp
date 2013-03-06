@@ -10,40 +10,45 @@
 #include <QVariant>
 #include <QDBusConnection>
 
-Task::Task(const QString& id, Project* parent) : Model(id, parent)
+Task::Task(const QString& id, Project* parent) : Model(parent)
 {
+    initialize<Task, TaskAdaptor>(id);
     setProjectId(parent->id());
-    init();
-}
-
-Task::Task(Project* parent) : Model(parent)
-{
-    setProjectId(parent->id());
-    init();
-}
-
-Task::~Task()
-{
-
-}
-
-void Task::init()
-{
-    new TaskAdaptor(this);
-    QDBusConnection dbus = QDBusConnection::sessionBus();
-    dbus.registerObject("/Task/" + id(), this);
-
+    
     foreach (const QString& eventId, eventIds())
     {
         Event* e = new Event(eventId, this);
         connect (e, SIGNAL(removed()), SIGNAL(eventIdsChanged()));
     }
-
+    
     foreach (const QString& noteId, noteIds())
     {
         Note* n = new Note(noteId, this);
         connect (n, SIGNAL(removed()), SIGNAL(noteIdsChanged()));
     }
+}
+
+Task::Task(Project* parent) : Model(parent)
+{
+    initialize<Task, TaskAdaptor>();
+    setProjectId(parent->id());
+    
+    foreach (const QString& eventId, eventIds())
+    {
+        Event* e = new Event(eventId, this);
+        connect (e, SIGNAL(removed()), SIGNAL(eventIdsChanged()));
+    }
+    
+    foreach (const QString& noteId, noteIds())
+    {
+        Note* n = new Note(noteId, this);
+        connect (n, SIGNAL(removed()), SIGNAL(noteIdsChanged()));
+    }
+}
+
+Task::~Task()
+{
+
 }
 
 T_DEF_STRING_FIELD(Task, projectId, ProjectId)
@@ -114,7 +119,7 @@ QString Task::addEvent(const QString& eventType, const QDateTime& start, const Q
 
 QStringList Task::eventIds() const
 {
-    return getList("events", "task");
+    return getList("Event", "taskId");
 }
 
 QString Task::addNote(const QString& title, const QString& contents)
@@ -129,15 +134,17 @@ QString Task::addNote(const QString& title, const QString& contents)
 
 QStringList Task::noteIds() const
 {
-    return getList("notes", "task");
+    return getList("Note", "taskId");
 }
 
 qlonglong Task::duration() const
 {
     QSqlQuery query;
-    query.prepare("SELECT sum(duration) FROM events WHERE task=:id");
+    query.prepare("SELECT sum(duration) FROM Event WHERE taskId=:id");
     query.bindValue(":id", id());
     query.exec();
+    
+    query.next();
     return query.value(0).toLongLong();
 }
 

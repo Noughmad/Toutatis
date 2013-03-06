@@ -23,28 +23,29 @@
 
 #include <QVariant>
 
-Event::Event(const QString& id, Task* parent): Model(id, parent)
+Event::Event(const QString& id, Task* parent): Model(parent)
 {
+    initialize<Event, EventAdaptor>(id);
     setTaskId(parent->id());
-    init();
+    
+    connect (this, &Event::timeChanged, [=]{
+        saveField("duration", start().msecsTo(end()));
+    });
 }
 
 Event::Event(Task* parent): Model(parent)
 {
+    initialize<Event, EventAdaptor>();
     setTaskId(parent->id());
-    init();
+    
+    connect (this, &Event::timeChanged, [=]{
+        saveField("duration", start().msecsTo(end()));
+    });
 }
 
 Event::~Event()
 {
 
-}
-
-void Event::init()
-{
-    new EventAdaptor(this);
-    QDBusConnection dbus = QDBusConnection::sessionBus();
-    dbus.registerObject("/Event/" + id(), this);
 }
 
 T_DEF_STRING_FIELD(Event, taskId, TaskId)
@@ -56,5 +57,5 @@ T_DEF_DATE_FIELD_X(Event, end, End, timeChanged)
 
 qlonglong Event::duration() const
 {
-    return start().msecsTo(end());
+    return getField("duration").toLongLong();
 }

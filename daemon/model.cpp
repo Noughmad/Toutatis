@@ -39,30 +39,6 @@ Q_GLOBAL_STATIC(ObjectStore, store)
 Model::Model(QObject* parent)
 : QObject(parent)
 {
-    mId = QUuid::createUuid().toString();
-    mId.remove(mId.size()-1, 1);
-    mId.remove(0, 1);
-    mId.replace(QRegExp("[^A-Za-z0-9]"), "_");
-    
-    mTableName = metaObject()->className();
-
-    QSqlQuery query;
-    query.prepare("INSERT INTO " + mTableName + " (_id, created, modified) VALUES (:id, :timestamp, :timestamp)");
-    query.bindValue(":id", mId);
-    query.bindValue(":timestamp", QDateTime::currentMSecsSinceEpoch());
-
-    bool ok = query.exec();
-    Q_ASSERT(ok);
-
-    registerObject(this);
-}
-
-Model::Model(const QString& id, QObject* parent)
-: QObject(parent)
-, mId(id)
-{
-    mTableName = metaObject()->className();
-    registerObject(this);
 }
 
 Model::~Model()
@@ -73,9 +49,7 @@ Model::~Model()
 void Model::remove()
 {
     QSqlQuery query;
-    query.prepare("DELETE " + mTableName + " WHERE _id=:id");
-    query.bindValue(":id", mId);
-    query.exec();
+    saveField("deleted", QDateTime::currentMSecsSinceEpoch());
 
     emit removed();
     deleteLater();
@@ -114,7 +88,7 @@ void Model::saveField(const QString& field, const QVariant& value)
 QStringList Model::getList(const QString& table, const QString& key) const
 {
     QSqlQuery query;
-    query.prepare("SELECT _id FROM " + table + " WHERE " + key + "=:id");
+    query.prepare(QString("SELECT _id FROM %1 WHERE %2=:id AND deleted IS NULL").arg(table).arg(key));
     query.bindValue(":id", mId);
     query.exec();
 
@@ -169,6 +143,10 @@ void Model::createTable(const QMetaObject& meta)
                 sqlType = "REAL";
                 break;
                 
+            case QVariant::StringList:
+                // This is probably a list of child ids
+                continue;
+                
             default:
                 qWarning() << "Unsupported field type" << p.type();
                 continue;
@@ -180,3 +158,30 @@ void Model::createTable(const QMetaObject& meta)
     QSqlQuery query;
     query.exec(sql);
 }
+
+void Model::setupId(const QString& id)
+{
+    mId = id;
+    mTableName = metaObject()->className();
+
+    if (mId.isEmpty())
+    {
+        mId = QUuid::createUuid().toString();
+        mId.remove(mId.size()-1, 1);
+        mId.remove(0, 1);
+        mId.replace(QRegExp("[^A-Za-z0-9]"), "_");
+     
+        qDebug() << "Creating a" << mTableName;
+        
+        QSqlQuery query;
+        query.prepare(QString("INSERT INTO %1 (_id, created, modified) VALUES (:id, :timestamp, :timestamp)").arg(mTableName));
+        query.bindValue(":id", mId);
+        query.bindValue(":timestamp", QDateTime::currentMSecsSinceEpoch());
+        
+        bool ok = query.exec();
+        Q_ASSERT(ok);
+    }
+    
+    registerObject(this);
+}
+
