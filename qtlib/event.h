@@ -21,11 +21,12 @@
 #define EVENT_H
 
 #include "event_interface.h"
+#include "qtatis_export.h"
 
 class Task;
 class EventPrivate;
 
-class Event : public com::noughmad::toutatis::Event
+class QTATIS_EXPORT Event : public com::noughmad::toutatis::Event
 {
     Q_OBJECT
     Q_PROPERTY(Task* task READ task)

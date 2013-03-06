@@ -1,11 +1,13 @@
 #ifndef TASKTREEMODEL_H
 #define TASKTREEMODEL_H
 
-#include <QtCore/qabstractitemmodel.h>
+#include "qtatis_export.h"
+
+#include <QAbstractItemModel>
 
 class TaskTreeModelPrivate;
 
-class TaskTreeModel : public QAbstractItemModel
+class QTATIS_EXPORT TaskTreeModel : public QAbstractItemModel
 {
     Q_OBJECT
 public:
@@ -22,7 +24,6 @@ public:
 private:
     TaskTreeModelPrivate* const d_ptr;
     Q_DECLARE_PRIVATE(TaskTreeModel)
-    Q_PRIVATE_SLOT(d_func(), void loadProjects());
 };
 
 #endif // TASKTREEMODEL_H

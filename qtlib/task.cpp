@@ -32,7 +32,7 @@ public:
 };
 
 Task::Task(const QString& id, QObject* parent)
-: com::noughmad::toutatis::Task(Service, "Task/ " + id, QDBusConnection::sessionBus(), parent)
+: com::noughmad::toutatis::Task(Service, "/Task/ " + id, QDBusConnection::sessionBus(), parent)
 , d_ptr(new TaskPrivate)
 {
     Q_D(Task);
@@ -42,6 +42,8 @@ Task::Task(const QString& id, QObject* parent)
     connect (this, SIGNAL(eventIdsChanged()), SLOT(updateEvents()));
     connect (this, SIGNAL(noteIdsChanged()), SLOT(updateNotes()));
     
+    updateEvents();
+    updateNotes();
 }
 
 Task::~Task()

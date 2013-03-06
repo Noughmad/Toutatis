@@ -21,12 +21,14 @@
 #define PROJECT_H
 
 #include "project_interface.h"
+#include "qtatis_export.h"
+
 #include <QList>
 
 class Task;
 class ProjectPrivate;
 
-class Project : public com::noughmad::toutatis::Project
+class QTATIS_EXPORT Project : public com::noughmad::toutatis::Project
 {
     Q_OBJECT
     Q_PROPERTY(QList<Task*> tasks READ tasks NOTIFY tasksChanged)
@@ -47,5 +49,7 @@ private:
     ProjectPrivate* const d_ptr;
     Q_DECLARE_PRIVATE(Project);
 };
+
+Q_DECLARE_METATYPE(QList<Project*>)
 
 #endif // PROJECT_H

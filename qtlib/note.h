@@ -21,11 +21,12 @@
 #define NOTE_H
 
 #include "note_interface.h"
+#include "qtatis_export.h"
 
 class Task;
 class NotePrivate;
 
-class Note : public com::noughmad::toutatis::Note
+class QTATIS_EXPORT Note : public com::noughmad::toutatis::Note
 {
     Q_OBJECT
     Q_PROPERTY(Task* task READ task)

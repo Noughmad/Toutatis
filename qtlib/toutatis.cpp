@@ -15,6 +15,14 @@ Toutatis::Toutatis(QObject* parent)
 , d_ptr(new ToutatisPrivate)
 {
     connect(this, SIGNAL(projectIdsChanged()), SLOT(updateProjects()));
+    
+    QDBusConnection dbus = QDBusConnection::sessionBus();
+    if (!dbus.interface()->isServiceRegistered(Service))
+    {
+        dbus.interface()->startService(Service);
+    }
+    
+    updateProjects();
 }
 
 Toutatis::~Toutatis()

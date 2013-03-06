@@ -28,7 +28,7 @@ public:
 };
 
 Event::Event(const QString& id, QObject* parent)
-: com::noughmad::toutatis::Event(Service, "Event/" + id, QDBusConnection::sessionBus(), parent)
+: com::noughmad::toutatis::Event(Service, "/Event/" + id, QDBusConnection::sessionBus(), parent)
 , d_ptr(new EventPrivate)
 {
     Q_D(Event);

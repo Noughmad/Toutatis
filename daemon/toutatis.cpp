@@ -228,7 +228,7 @@ QString Toutatis::findTask(const QString& project, const QString& task)
 }
 
 void Toutatis::synchronize(const QUrl& destination)
-{
+{ 
     QSqlQuery lastQuery;
     lastQuery.prepare("SELECT time FROM Sync WHERE destination=:url");
     lastQuery.bindValue(":url", destination);
@@ -257,13 +257,13 @@ void Toutatis::synchronize(const QUrl& destination)
     
     QNetworkAccessManager manager;
     QNetworkReply* reply = manager.post(request, doc.toJson());
-
-    connect (reply, &QNetworkReply::finished, [=] {
+    connect (reply, &QNetworkReply::finished, [=]{
+        
         QJsonObject object = QJsonDocument::fromJson(reply->readAll()).object();
-        Utils::deserialize<Project>(object["Project"].toArray(), lastSync);
-        Utils::deserialize<Task>(object["Task"].toArray(), lastSync);
-        Utils::deserialize<Event>(object["Event"].toArray(), lastSync);
-        Utils::deserialize<Note>(object["Note"].toArray(), lastSync);
+        Utils::deserialize<Project>(object["Project"].toArray(), timestamp);
+        Utils::deserialize<Task>(object["Task"].toArray(), timestamp);
+        Utils::deserialize<Event>(object["Event"].toArray(), timestamp);
+        Utils::deserialize<Note>(object["Note"].toArray(), timestamp);
         
         QSqlQuery sync;
         sync.prepare("INSERT INTO Sync (time, destination) VALUES (:timestamp, :url)");

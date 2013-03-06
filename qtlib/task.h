@@ -21,6 +21,7 @@
 #define TASK_H
 
 #include "task_interface.h"
+#include "qtatis_export.h"
 
 class Note;
 class Event;
@@ -28,7 +29,7 @@ class Project;
 
 class TaskPrivate;
 
-class Task : public com::noughmad::toutatis::Task
+class QTATIS_EXPORT Task : public com::noughmad::toutatis::Task
 {
     Q_OBJECT
     Q_PROPERTY(Project* project READ project)
@@ -56,5 +57,7 @@ private:
     Q_DECLARE_PRIVATE(Task);
 
 };
+
+Q_DECLARE_METATYPE(QList<Task*>)
 
 #endif // TASK_H

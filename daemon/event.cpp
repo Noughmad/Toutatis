@@ -28,19 +28,15 @@ Event::Event(const QString& id, Task* parent): Model(parent)
     initialize<Event, EventAdaptor>(id);
     setTaskId(parent->id());
     
-    connect (this, &Event::timeChanged, [=]{
-        saveField("duration", start().msecsTo(end()));
-    });
+    connect (this, SIGNAL(timeChanged()), SLOT(updateDuration()));
 }
 
 Event::Event(Task* parent): Model(parent)
 {
     initialize<Event, EventAdaptor>();
     setTaskId(parent->id());
-    
-    connect (this, &Event::timeChanged, [=]{
-        saveField("duration", start().msecsTo(end()));
-    });
+
+    connect (this, SIGNAL(timeChanged()), SLOT(updateDuration()));
 }
 
 Event::~Event()
@@ -59,4 +55,9 @@ T_DEF_DATE_FIELD_X(Event, end, End, timeChanged)
 qlonglong Event::duration() const
 {
     return getField("duration").toLongLong();
+}
+
+void Event::updateDuration()
+{
+    saveField("duration", start().msecsTo(end()));
 }

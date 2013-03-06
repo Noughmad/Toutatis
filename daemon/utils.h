@@ -36,7 +36,7 @@ namespace Utils
 template <class T>
 QJsonArray Utils::serialize(qlonglong timestamp)
 {
-    serializeType(T::staticMetaObject, timestamp);
+    return serializeType(T::staticMetaObject, timestamp);
 }
 
 template <class T> void Utils::deserialize(const QJsonArray& data, qlonglong timestamp)

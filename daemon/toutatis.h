@@ -3,6 +3,7 @@
 
 #include <QObject>
 #include <QStringList>
+#include <QUrl>
 #include <QSqlDatabase>
 
 class Toutatis : public QObject

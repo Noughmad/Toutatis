@@ -1,29 +1,21 @@
 #include "tasktreemodel.h"
-#include "tasktreemodel_p.h"
 
 #include "toutatis.h"
 #include "project.h"
+#include "task.h"
 #include "task_interface.h"
 
-using namespace com::noughmad;
-using namespace com::noughmad::toutatis;
-
-void TaskTreeModelPrivate::loadProjects()
+class TaskTreeModelPrivate 
 {
-}
+public:
+    Toutatis daemon;
+};
 
 TaskTreeModel::TaskTreeModel(QObject* parent)
 : QAbstractItemModel(parent)
-, d_ptr(new TaskTreeModelPrivate(this))
+, d_ptr(new TaskTreeModelPrivate)
 {
-    Q_D(TaskTreeModel);
-    d->daemon = new Toutatis(
-        "com.noughmad.Toutatis",
-        "/Toutatis",
-        QDBusConnection::sessionBus(),
-        this);
-    connect(d->daemon, SIGNAL(projectsChanged()), SLOT(loadProjects()));
-    d->loadProjects();
+
 }
 
 TaskTreeModel::~TaskTreeModel()
@@ -31,24 +23,23 @@ TaskTreeModel::~TaskTreeModel()
     delete d_ptr;
 }
 
+QModelIndex TaskTreeModel::index(int row, int column, const QModelIndex& parent) const
+{
+    Q_D(const TaskTreeModel);
+    if (parent.isValid())
+    {
+        Project* p = static_cast<Project*>(parent.internalPointer());
+        return createIndex(row, column, p->tasks().at(row));
+    }
+    else
+    {
+        return createIndex(row, column, d->daemon.projects().at(row));
+    }
+}
+
 bool TaskTreeModel::hasChildren(const QModelIndex& parent) const
 {
-    if (parent.isValid() && parent.parent().isValid())
-    {
-        return false;
-    }
-
-    return true;
-}
-
-QVariant TaskTreeModel::data(const QModelIndex& index, int role) const
-{
-
-}
-
-int TaskTreeModel::columnCount(const QModelIndex& parent) const
-{
-
+    return !parent.isValid();
 }
 
 int TaskTreeModel::rowCount(const QModelIndex& parent) const
@@ -56,64 +47,85 @@ int TaskTreeModel::rowCount(const QModelIndex& parent) const
     Q_D(const TaskTreeModel);
     if (!parent.isValid())
     {
-        return d->projects.size();
+        return d->daemon.projectIds().size();
     }
-
-    else if (!parent.parent().isValid())
+    else
     {
-        Project* p = static_cast<Project*>(parent.internalPointer());
-        return d->tasks[p].size();
+        return static_cast<Project*>(parent.internalPointer())->taskIds().size();
     }
-
-    return 0;
 }
 
 QModelIndex TaskTreeModel::parent(const QModelIndex& child) const
 {
     Q_D(const TaskTreeModel);
     Task* t = static_cast<Task*>(child.internalPointer());
-
-    Project* p = 0;
-    for (QHash<Project*, QList<Task*> >::const_iterator it = d->tasks.constBegin(); it != d->tasks.constEnd(); ++it)
+    
+    if (d->daemon.projects().contains(static_cast<Project*>(child.internalPointer())))
     {
-        if (it.value().contains(t))
+        return QModelIndex();
+    }
+    
+    QList<Project*> projects = d->daemon.projects();
+    for (int i = 0; i < projects.size(); ++i)
+    {
+        if (projects[i]->tasks().contains(t))
         {
-            p = it.key();
-            break;
+            return index(i, 0);
         }
     }
-    if (p)
-    {
-        return index(d->projects.indexOf(p), 0);
-    }
-
-    p = static_cast<Project*>(child.internalPointer());
-    if (d->projects.contains(p))
-    {
-        return index(0, 0);
-    }
+    
+    return QModelIndex();
 }
 
-QModelIndex TaskTreeModel::index(int row, int column, const QModelIndex& parent) const
+int TaskTreeModel::columnCount(const QModelIndex& parent) const
 {
-    Q_D(const TaskTreeModel);
-    if (!parent.isValid())
+    if (parent.isValid())
     {
-        // We want top-level items, I.E. projects
-
-        return createIndex(row, column, d->projects[row]);
-    }
-    else if (!parent.parent().isValid())
-    {
-        // Second-order items are tasks
-
-        Project* project = static_cast<Project*>(parent.internalPointer());
-        return createIndex(row, column, d->tasks[project][row]);
+        // Project: name, client
+        return 2;
     }
     else
     {
-        // TODO: Show events and notes here
+        // Task: name, status, duration, lastStart
+        return 4;
     }
+}
 
-    return QModelIndex();
+QVariant TaskTreeModel::data(const QModelIndex& index, int role) const
+{
+    if (role == Qt::DisplayRole)
+    {
+        if (index.parent().isValid())
+        {
+            Task* task = static_cast<Task*>(index.internalPointer());
+            switch (index.column())
+            {
+                case 0:
+                    return task->name();
+                    
+                case 1:
+                    return task->status();
+                    
+                case 2:
+                    return task->duration();
+                    
+                case 3:
+                    return task->lastStart();
+            }
+        }
+        else
+        {
+            Project* project = static_cast<Project*>(index.internalPointer());
+            switch (index.column())
+            {
+                case 0:
+                    return project->name();
+                    
+                case 1:
+                    return project->client();
+            }
+        }
+    }
+    
+    return QVariant();
 }

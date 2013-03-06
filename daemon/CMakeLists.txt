@@ -1,4 +1,16 @@
-include_directories(${QT_INCLUDES} ${CMAKE_CURRENT_SOURCE_DIR} ${CMAKE_CURRENT_BINARY_DIR})
+find_package(Qt5Core)
+find_package(Qt5DBus)
+find_package(Qt5Sql)
+find_package(Qt5Network)
+
+include_directories(
+    ${Qt5Core_INCLUDE_DIRS}
+    ${Qt5DBus_INCLUDE_DIRS}
+    ${Qt5Sql_INCLUDE_DIRS}
+    ${Qt5Network_INCLUDE_DIRS}
+    ${CMAKE_CURRENT_SOURCE_DIR}
+    ${CMAKE_CURRENT_BINARY_DIR}
+)
 
 set(Toutatis_daemon_SRCS 
     model.cpp

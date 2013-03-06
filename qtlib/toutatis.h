@@ -2,12 +2,14 @@
 #define TOUTATIS_H
 
 #include "toutatis_interface.h"
+#include "qtatis_export.h"
+
 #include <QList>
 
 class Project;
 class ToutatisPrivate;
 
-class Toutatis : public com::noughmad::Toutatis
+class QTATIS_EXPORT Toutatis : public com::noughmad::Toutatis
 {
     Q_OBJECT
     Q_PROPERTY(QList<Project*> projects READ projects NOTIFY projectsChanged)

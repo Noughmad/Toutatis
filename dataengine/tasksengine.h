@@ -17,40 +17,24 @@
 */
 
 
-#include "project.h"
-#include "task.h"
-#include "global.h"
+#ifndef TASKSENGINE_H
+#define TASKSENGINE_H
 
-class ProjectPrivate
+#include <Plasma/DataEngine>
+#include "toutatis.h"
+
+class TasksEngine : public Plasma::DataEngine
 {
+    Q_OBJECT
+
 public:
-    QList<Task*> tasks;
+    TasksEngine(QObject* parent, const QVariantList& args);
+    
+    virtual bool sourceRequestEvent(const QString& source);
+    virtual bool updateSourceEvent(const QString& source);
+    
+private:
+    Toutatis mDaemon;
 };
 
-Project::Project(const QString& id, QObject* parent)
-: com::noughmad::toutatis::Project(Service, "/Project/" + id, QDBusConnection::sessionBus(), parent)
-, d_ptr(new ProjectPrivate)
-{
-    connect (this, SIGNAL(taskIdsChanged()), SLOT(updateTasks()));
-    
-    qDebug() << id << isValid();
-}
-
-Project::~Project()
-{
-    delete d_ptr;
-}
-
-QList< Task* > Project::tasks() const
-{
-    Q_D(const Project);
-    return d->tasks;
-}
-
-void Project::updateTasks()
-{
-    Q_D(Project);
-    updateModelList(d->tasks, taskIds(), this);
-    emit tasksChanged();
-}
-
+#endif // TASKSENGINE_H

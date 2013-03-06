@@ -53,6 +53,9 @@ public:
 
 private:
     void init();
+    
+private slots:
+    void updateDuration();
 
 signals:
     void taskIdChanged(const QString& task);
