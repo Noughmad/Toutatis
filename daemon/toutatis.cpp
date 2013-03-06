@@ -253,15 +253,17 @@ void Toutatis::synchronize(const QUrl& destination)
     url.setPath("/api/sync");
     request.setUrl(url);
     
+    qlonglong timestamp = QDateTime::currentMSecsSinceEpoch();
+    
     QNetworkAccessManager manager;
     QNetworkReply* reply = manager.post(request, doc.toJson());
-    connect (reply, &QNetworkReply::finished, [=] {
-        syncReplyFinished(reply->readAll());
-    });
-}
 
-void Toutatis::syncReplyFinished(const QByteArray& data)
-{
-    QJsonDocument doc = QJsonDocument::fromJson(data);
-    // TODO: Merge this changes
+    connect (reply, &QNetworkReply::finished, [=] {
+        Utils::deserialize(reply->readAll(), lastSync);
+        QSqlQuery sync;
+        sync.prepare("INSERT INTO Sync (time, destination) VALUES (:timestamp, :url)");
+        sync.bindValue(":timestamp", timestamp);
+        sync.bindValue(":url", destination);
+        sync.exec();
+    });
 }

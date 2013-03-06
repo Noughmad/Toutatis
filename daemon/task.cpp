@@ -146,6 +146,13 @@ qlonglong Task::duration() const
     query.exec();
     
     query.next();
-    return query.value(0).toLongLong();
+    qlonglong d = query.value(0).toLongLong();
+    
+    if (isActive())
+    {
+        d += lastStart().msecsTo(QDateTime::currentDateTime());
+    }
+    
+    return d;
 }
 

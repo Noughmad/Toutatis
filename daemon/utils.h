@@ -21,6 +21,8 @@ namespace Utils
     
     QJsonObject serializeObject(const QStringList& properties, const QSqlQuery& query);
     template <class T> QJsonArray serialize(qlonglong timestamp);
+    
+    void deserialize(const QByteArray& data, qlonglong timestamp);
 }
 
 template <class T>

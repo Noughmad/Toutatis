@@ -38,7 +38,6 @@ signals:
 
 private:
     void createTables();
-    void syncReplyFinished(const QByteArray& data);
 
 private:
     QSqlDatabase mDatabase;
