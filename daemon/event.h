@@ -32,6 +32,7 @@ class Event : public Model
     Q_PROPERTY(QString taskId READ taskId WRITE setTaskId NOTIFY taskIdChanged)
     Q_PROPERTY(QString type READ type WRITE setType NOTIFY typeChanged)
     Q_PROPERTY(QString message READ type WRITE setMessage NOTIFY messageChanged)
+    Q_PROPERTY(QString location READ location WRITE setLocation NOTIFY locationChanged)
     Q_PROPERTY(QDateTime start READ start WRITE setStart NOTIFY timeChanged)
     Q_PROPERTY(QDateTime end READ end WRITE setEnd NOTIFY timeChanged)
     Q_PROPERTY(qlonglong duration READ duration NOTIFY timeChanged)
@@ -44,6 +45,7 @@ public:
     T_STRING_FIELD(taskId, TaskId)
     T_STRING_FIELD(type, Type)
     T_STRING_FIELD(message, Message)
+    T_STRING_FIELD(location, Location)
     T_DATE_FIELD(start, Start)
     T_DATE_FIELD(end, End)
 
@@ -56,6 +58,7 @@ signals:
     void taskIdChanged(const QString& task);
     void typeChanged(const QString& type);
     void messageChanged(const QString& message);
+    void locationChanged(const QString& location);
     void timeChanged();
 };
 

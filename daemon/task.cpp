@@ -8,7 +8,7 @@
 
 #include <QSqlQuery>
 #include <QVariant>
-#include <QDBusConnection>
+#include <QHostInfo>
 
 Task::Task(const QString& id, Project* parent) : Model(parent)
 {
@@ -112,6 +112,7 @@ QString Task::addEvent(const QString& eventType, const QDateTime& start, const Q
         e->setEnd(start);
     }
     e->setMessage(message);
+    e->setLocation(QHostInfo::localHostName());
 
     emit eventIdsChanged();
     return e->id();

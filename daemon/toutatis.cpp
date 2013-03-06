@@ -14,6 +14,10 @@
 #include <QSqlError>
 #include <QDir>
 
+#include <QNetworkRequest>
+#include <QNetworkReply>
+#include <QNetworkAccessManager>
+
 Toutatis::Toutatis(QObject* parent) : QObject(parent)
 {
     mDatabase = QSqlDatabase::addDatabase("QSQLITE");
@@ -77,44 +81,12 @@ void Toutatis::createTables()
     Model::createTable<Task>();
     Model::createTable<Event>();
     Model::createTable<Note>();
-    /*
+    
     QSqlQuery query;
-    query.exec("CREATE TABLE projects "
-        "(_id TEXT PRIMARY KEY, "
-        "created INTEGER, "
-        "modified INTEGER, "
-        "name TEXT, "
-        "client TEXT, "
-        "visible INTEGER DEFAULT 1,);");
-
-    query.exec("CREATE TABLE tasks "
-        "(_id TEXT PRIMARY KEY, "
-        "created INTEGER, "
-        "modified INTEGER, "
-        "project INTEGER REFERENCES projects(_id), "
-        "name TEXT, "
-        "active INTEGER DEFAULT 0, "
-        "lastStart INTEGER DEFAULT -1, "
-        "status INTEGER DEFAULT 1);");
-
-    query.exec("CREATE TABLE events "
-        "(_id TEXT PRIMARY KEY, "
-        "created INTEGER, "
-        "modified INTEGER, "
-        "task INTEGER REFERENCES tasks(_id), "
-        "type TEXT, "
-        "start INTEGER, "
-        "end INTEGER, "
-        "message TEXT);");
-
-    query.exec("CREATE TABLE notes "
-        "(_id TEXT PRIMARY KEY, "
-        "created INTEGER, "
-        "modified INTEGER, "
-        "task INTEGER REFERENCES tasks(_id), "
-        "title TEXT, "
-        "content TEXT);");
-        */
+    query.exec("CREATE TABLE Sync ("
+        "_id INTEGER PRIMARY KEY, "
+        "time INTEGER, "
+        "destination TEXT);");
 }
 
 QStringList Toutatis::projectIds() const
@@ -253,4 +225,43 @@ QString Toutatis::findTask(const QString& project, const QString& task)
     {
         return QString();
     }
+}
+
+void Toutatis::synchronize(const QUrl& destination)
+{
+    QSqlQuery lastQuery;
+    lastQuery.prepare("SELECT time FROM Sync WHERE destination=:url");
+    lastQuery.bindValue(":url", destination);
+    lastQuery.exec();
+    
+    qlonglong lastSync = 0;
+    if (lastQuery.next())
+    {
+        lastSync = lastQuery.value(0).toLongLong();
+    }
+    
+    QJsonObject object;
+    object["Project"] = Utils::serialize<Project>(lastSync);
+    object["Task"] = Utils::serialize<Task>(lastSync);
+    object["Event"] = Utils::serialize<Event>(lastSync);
+    object["Note"] = Utils::serialize<Note>(lastSync);
+    
+    QJsonDocument doc(object);
+    
+    QNetworkRequest request;
+    QUrl url(destination);
+    url.setPath("/api/sync");
+    request.setUrl(url);
+    
+    QNetworkAccessManager manager;
+    QNetworkReply* reply = manager.post(request, doc.toJson());
+    connect (reply, &QNetworkReply::finished, [=] {
+        syncReplyFinished(reply->readAll());
+    });
+}
+
+void Toutatis::syncReplyFinished(const QByteArray& data)
+{
+    QJsonDocument doc = QJsonDocument::fromJson(data);
+    // TODO: Merge this changes
 }

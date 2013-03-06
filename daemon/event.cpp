@@ -51,6 +51,7 @@ Event::~Event()
 T_DEF_STRING_FIELD(Event, taskId, TaskId)
 T_DEF_STRING_FIELD(Event, type, Type)
 T_DEF_STRING_FIELD(Event, message, Message)
+T_DEF_STRING_FIELD(Event, location, Location)
 
 T_DEF_DATE_FIELD_X(Event, start, Start, timeChanged)
 T_DEF_DATE_FIELD_X(Event, end, End, timeChanged)

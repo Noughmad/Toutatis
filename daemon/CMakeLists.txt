@@ -20,6 +20,6 @@ qt5_add_dbus_adaptor(Toutatis_daemon_SRCS ../com.noughmad.toutatis.Note.xml note
 dbus_add_activation_service(com.noughmad.Toutatis.service.in)
 
 add_executable(toutatisd ${Toutatis_daemon_SRCS})
-target_link_libraries(toutatisd ${Qt5Core_LIBRARIES} ${Qt5DBus_LIBRARIES} ${Qt5Sql_LIBRARIES})
+target_link_libraries(toutatisd ${Qt5Core_LIBRARIES} ${Qt5DBus_LIBRARIES} ${Qt5Sql_LIBRARIES} ${Qt5Network_LIBRARIES})
 
 install(TARGETS toutatisd RUNTIME DESTINATION bin)

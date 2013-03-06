@@ -29,6 +29,8 @@ public slots:
 
     QString findProject(const QString& name);
     QString findTask(const QString& project, const QString& task);
+    
+    void synchronize(const QUrl& destination);
 
 signals:
     void projectIdsChanged();
@@ -36,6 +38,7 @@ signals:
 
 private:
     void createTables();
+    void syncReplyFinished(const QByteArray& data);
 
 private:
     QSqlDatabase mDatabase;
