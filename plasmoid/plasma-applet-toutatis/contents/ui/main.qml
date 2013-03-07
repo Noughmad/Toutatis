@@ -33,8 +33,13 @@ Item {
                 
                 PlasmaComponents.Label {
                     anchors.fill: parent
-                    text: modelData.name
+                    text: "Blank"
+                    // text: modelData.name
                     // text: model.modelData.name
+                }
+                
+                Component.onCompleted: {
+                    // console.log(modelData)
                 }
                 
                 MouseArea {
