@@ -9,7 +9,7 @@
 class Project;
 class ToutatisPrivate;
 
-class QTATIS_EXPORT Toutatis : public com::noughmad::Toutatis
+class QTATIS_EXPORT Toutatis : public QObject
 {
     Q_OBJECT
     Q_PROPERTY(QList<Project*> projects READ projects NOTIFY projectsChanged)
@@ -22,6 +22,11 @@ public:
 
 public Q_SLOTS:
     void updateProjects();
+    void startTracking(const QString& id);
+    void stopTracking();
+    
+    QString findProject(const QString& name);
+    QString findTask(const QString& project, const QString& name);
     
 signals:
     void projectsChanged();

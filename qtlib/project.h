@@ -20,30 +20,51 @@
 #ifndef PROJECT_H
 #define PROJECT_H
 
-#include "project_interface.h"
 #include "qtatis_export.h"
 
 #include <QList>
+#include <QObject>
+#include <QMetaType>
 
 class Task;
 class ProjectPrivate;
 
-class QTATIS_EXPORT Project : public com::noughmad::toutatis::Project
+class QTATIS_EXPORT Project : public QObject
 {
     Q_OBJECT
+    Q_PROPERTY(QString id READ id)
+    Q_PROPERTY(bool valid READ isValid)
+
+    Q_PROPERTY(QString name READ name WRITE setName)
+    Q_PROPERTY(QString client READ client WRITE setClient)
+    Q_PROPERTY(bool visible READ isVisible WRITE setVisible)
     Q_PROPERTY(QList<Task*> tasks READ tasks NOTIFY tasksChanged)
     
 public:
     Project(const QString& id, QObject* parent = 0);
     ~Project();
     
+    QString id() const;
+    bool isValid() const;
     QList<Task*> tasks() const;
+    
+    QString name() const;
+    void setName(const QString& name);
+    
+    QString client() const;
+    void setClient(const QString& client);
+    
+    bool isVisible() const;
+    void setVisible(bool visible);
     
 public slots:
     void updateTasks();
     
 signals:
     void tasksChanged();
+    void nameChanged(const QString& name);
+    void clientChanged(const QString& client);
+    void visibleChanged(bool visible);
     
 private:
     ProjectPrivate* const d_ptr;

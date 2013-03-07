@@ -140,7 +140,7 @@ Project* Client::getProject(const QString& name)
         return project;
     }
 
-    QString id = mDaemon->findProject(name).value();
+    QString id = mDaemon->findProject(name);
     if (!id.isEmpty())
     {
         project = new Project(id, this);
@@ -169,7 +169,7 @@ Task* Client::getTask(const QString& name, const QString& project)
         return 0;
     }
 
-    QString id = mDaemon->findTask(project, name).value();
+    QString id = mDaemon->findTask(project, name);
     if (!id.isEmpty())
     {
         task = new Task(id, this);

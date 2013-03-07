@@ -24,6 +24,7 @@
 TasksEngine::TasksEngine(QObject* parent, const QVariantList& args): DataEngine(parent, args)
 {
     setMinimumPollingInterval(200);
+    // qRegisterMetaType<QObjectList>("QObjectList");
     
     /**
      * TODO: Toutatis used signals for everything, so we should not need polling at all here. 
@@ -46,7 +47,9 @@ bool TasksEngine::updateSourceEvent(const QString& source)
             projects << p->name();
             objects << p;
         }
-        setData(source, "ids", mDaemon.projectIds());
+        
+        qDebug() << mDaemon.projects();
+        
         setData(source, "names", projects);
         setData(source, "projects", QVariant::fromValue(objects));
         return true;

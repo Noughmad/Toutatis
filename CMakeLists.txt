@@ -11,10 +11,10 @@ set(CMAKE_POSITION_INDEPENDENT_CODE TRUE)
 
 include(cmake/DBusMacros.cmake)
 
-add_subdirectory(daemon)
+# add_subdirectory(daemon)
 add_subdirectory(client)
 add_subdirectory(git)
 add_subdirectory(qtlib)
-add_subdirectory(dataengine)
+# add_subdirectory(dataengine)
 add_subdirectory(plasmoid)
 add_subdirectory(qml)

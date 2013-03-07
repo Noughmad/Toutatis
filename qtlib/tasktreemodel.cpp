@@ -47,11 +47,11 @@ int TaskTreeModel::rowCount(const QModelIndex& parent) const
     Q_D(const TaskTreeModel);
     if (!parent.isValid())
     {
-        return d->daemon.projectIds().size();
+        return d->daemon.projects().size();
     }
     else
     {
-        return static_cast<Project*>(parent.internalPointer())->taskIds().size();
+        return static_cast<Project*>(parent.internalPointer())->tasks().size();
     }
 }
 

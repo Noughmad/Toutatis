@@ -4,18 +4,16 @@ import org.kde.plasma.components 0.1 as PlasmaComponents
 import com.noughmad.toutatis 1.0
 
 Item {
-    PlasmaCore.DataSource {
-        id: dataSource
-        engine: "com.noughmad.toutatis"
-        connectedSources: ["Projects"]
-        interval: 500
-        
-        onNewData: {
-            if (sourceName== "Projects") {
-                projects.model = data.projects
-                console.log(data.projects)
-            }
-        }
+    id: main
+    property QtObject selectedProject: null
+    
+    Toutatis {
+        id: daemon
+    }
+    
+    Component.onCompleted: {
+        console.log(daemon.projects)
+        projectView.model = daemon.projects
     }
     
     Row {
@@ -23,36 +21,67 @@ Item {
         anchors.fill: parent
 
         ListView {
-            id: projects
+            id: projectView
             width: parent.width / 3
             height: parent.height
+            
+            // model: daemon.projects
             
             delegate: PlasmaComponents.ListItem {
                 width: parent.width
                 height: 30
                 
-                Text {
+                PlasmaComponents.Label {
                     anchors.fill: parent
-                    text: modelData
+                    text: modelData.name
+                    // text: model.modelData.name
+                }
+                
+                MouseArea {
+                    anchors.fill: parent
+                    hoverEnabled: true
                     
-                    Component.onCompleted: {
+                    onClicked: {
                         console.log(modelData)
-                        console.log(modelData.name)
+                        console.log(model.modelData.name)
+                        projectView.currentIndex = index
+                        selectedProject = model.modelData
                     }
                 }
+            }
+
+            highlight: PlasmaComponents.Highlight {
+                pressed: true
             }
         }
         
         ListView {
-            id: tasks
+            id: taskView
             width: parent.width * 2 / 3
-            height: parent.height
+            
+            model: selectedProject ? selectedProject.tasks : null
             
             delegate: PlasmaComponents.ListItem {
-                Text {
+                width: parent.width
+                height: 30
+                
+                PlasmaComponents.Label {
                     anchors.fill: parent
-                    text: modelData
+                    text: model.modelData.name
                 }
+                
+                MouseArea {
+                    anchors.fill: parent
+                    hoverEnabled: true
+                    
+                    onClicked: {
+                        console.log("Task clicked: " + model.modelData.id)
+                    }
+                }
+            }
+            
+            highlight: PlasmaComponents.Highlight {
+                pressed: true
             }
         }
     }

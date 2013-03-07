@@ -21,24 +21,81 @@
 #include "task.h"
 #include "global.h"
 
+#include "project_interface.h"
+
 class ProjectPrivate
 {
 public:
+    com::noughmad::toutatis::Project* interface;
     QList<Task*> tasks;
 };
 
 Project::Project(const QString& id, QObject* parent)
-: com::noughmad::toutatis::Project(Service, "/Project/" + id, QDBusConnection::sessionBus(), parent)
+: QObject(parent)
 , d_ptr(new ProjectPrivate)
 {
-    connect (this, SIGNAL(taskIdsChanged()), SLOT(updateTasks()));
+    Q_D(Project);
+    d->interface = new com::noughmad::toutatis::Project(Service, "/Project/" + id, QDBusConnection::sessionBus(), this);
+    connect (d->interface, SIGNAL(taskIdsChanged()), SLOT(updateTasks()));
+    connect (d->interface, SIGNAL(nameChanged(QString)), SIGNAL(nameChanged(QString)));
+    connect (d->interface, SIGNAL(clientChanged(QString)), SIGNAL(clientChanged(QString)));
+    connect (d->interface, SIGNAL(visibleChanged(bool)), SIGNAL(visibleChanged(bool)));
     
-    qDebug() << id << isValid();
+    qDebug() << id << d->interface->isValid();
 }
 
 Project::~Project()
 {
     delete d_ptr;
+}
+
+QString Project::id() const
+{
+    Q_D(const Project);
+    return d->interface->id();
+}
+
+bool Project::isValid() const
+{
+    Q_D(const Project);
+    return d->interface->isValid();
+}
+
+QString Project::name() const
+{
+    Q_D(const Project);
+    qDebug() << "Reading project name";
+    return d->interface->name();
+}
+
+void Project::setName(const QString& name)
+{
+    Q_D(Project);
+    d->interface->setName(name);
+}
+
+QString Project::client() const
+{
+    Q_D(const Project);
+    return d->interface->client();
+}
+
+void Project::setClient(const QString& client)
+{
+    Q_D(Project);
+    d->interface->setClient(client);
+}
+
+bool Project::isVisible() const
+{
+    Q_D(const Project);
+    return d->interface->visible();
+}
+
+void Project::setVisible(bool visible)
+{
+    Q_D(Project);
+    d->interface->setVisible(visible);
 }
 
 QList< Task* > Project::tasks() const
@@ -50,7 +107,7 @@ QList< Task* > Project::tasks() const
 void Project::updateTasks()
 {
     Q_D(Project);
-    updateModelList(d->tasks, taskIds(), this);
+    updateModelList(d->tasks, d->interface->taskIds(), this);
     emit tasksChanged();
 }
 
