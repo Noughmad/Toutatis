@@ -23,24 +23,35 @@
 #include "event.h"
 #include "note.h"
 
+#include "task_interface.h"
+
 class TaskPrivate
 {
 public:
     Project* project;
     QList<Event*> events;
     QList<Note*> notes;
+    com::noughmad::toutatis::Task* interface;
 };
 
 Task::Task(const QString& id, QObject* parent)
-: com::noughmad::toutatis::Task(Service, "/Task/ " + id, QDBusConnection::sessionBus(), parent)
+: QObject(parent)
 , d_ptr(new TaskPrivate)
 {
     Q_D(Task);
-    d->project = getOrCreateModel<Project>(parent, projectId(), this);
+    d->interface = new com::noughmad::toutatis::Task(Service, "/Task/" + id, QDBusConnection::sessionBus(), this);
+    
+    qDebug() << "Created a task" << id << d->interface->path();
+    
+    d->project = getOrCreateModel<Project>(parent, d->interface->projectId(), this);
     Q_ASSERT(d->project->isValid());
     
-    connect (this, SIGNAL(eventIdsChanged()), SLOT(updateEvents()));
-    connect (this, SIGNAL(noteIdsChanged()), SLOT(updateNotes()));
+    connect (d->interface, SIGNAL(eventIdsChanged()), SLOT(updateEvents()));
+    connect (d->interface, SIGNAL(noteIdsChanged()), SLOT(updateNotes()));
+    
+    connect (d->interface, SIGNAL(nameChanged(QString)), SIGNAL(nameChanged(QString)));
+    connect (d->interface, SIGNAL(statusChanged(QString)), SIGNAL(statusChanged(QString)));
+    connect (d->interface, SIGNAL(activeChanged(bool)), SIGNAL(activeChanged(bool)));
     
     updateEvents();
     updateNotes();
@@ -51,16 +62,76 @@ Task::~Task()
     delete d_ptr;
 }
 
+bool Task::isValid() const
+{
+    Q_D(const Task);
+    return d->interface->isValid();
+}
+
+QString Task::id() const
+{
+    Q_D(const Task);
+    return d->interface->id();
+}
+
+QString Task::name() const
+{
+    Q_D(const Task);
+    return d->interface->name();
+}
+
+void Task::setName(const QString& name)
+{
+    Q_D(Task);
+    d->interface->setName(name);
+}
+
+QString Task::status() const
+{
+    Q_D(const Task);
+    return d->interface->status();
+}
+
+void Task::setStatus(const QString& status)
+{
+    Q_D(Task);
+    d->interface->setStatus(status);
+}
+
+qlonglong Task::duration() const
+{
+    Q_D(const Task);
+    return d->interface->duration();
+}
+
 QList< Event* > Task::events() const
 {
     Q_D(const Task);
     return d->events;
 }
 
+bool Task::isActive() const
+{
+    Q_D(const Task);
+    return d->interface->active();
+}
+
+void Task::setActive(bool active)
+{
+    Q_D(Task);
+    d->interface->setActive(active);
+}
+
+QDateTime Task::lastStart() const
+{
+    Q_D(const Task);
+    return d->interface->lastStart();
+}
+
 void Task::updateEvents()
 {
     Q_D(Task);
-    updateModelList(d->events, eventIds(), this);
+    updateModelList(d->events, d->interface->eventIds(), this);
     emit eventsChanged();
 }
 
@@ -73,7 +144,7 @@ QList< Note* > Task::notes() const
 void Task::updateNotes()
 {
     Q_D(Task);
-    updateModelList(d->notes, noteIds(), this);
+    updateModelList(d->notes, d->interface->noteIds(), this);
     emit notesChanged();
 }
 

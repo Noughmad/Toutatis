@@ -1,93 +1,89 @@
 import QtQuick 1.0
 import org.kde.plasma.core 0.1 as PlasmaCore
 import org.kde.plasma.components 0.1 as PlasmaComponents
-import com.noughmad.toutatis 1.0
+// import com.noughmad.toutatis 1.0
 
 Item {
     id: main
     property QtObject selectedProject: null
     
-    Toutatis {
-        id: daemon
+    PlasmaCore.DataSource {
+        id: dataSource
+        engine: "com.noughmad.toutatis"
+        connectedSources: ["Toutatis"]
+        
+        onNewData: {
+            console.log("New data on source " + sourceName)
+            if (sourceName == "Toutatis") {
+                projectView.model = data.projects
+            }
+        }
     }
     
-    Component.onCompleted: {
-        console.log(daemon.projects)
-        projectView.model = daemon.projects
-    }
-    
-    Row {
-        spacing: 10
-        anchors.fill: parent
-
-        ListView {
-            id: projectView
-            width: parent.width / 3
-            height: parent.height
+    ListView {
+        id: projectView
+        
+        anchors {
+            top: parent.top
+            bottom: parent.bottom
+            left: parent.left
+        }
+        width: parent.width / 3
+        
+        model: dataSource.data.Toutatis.projects
+        
+        delegate: PlasmaComponents.ListItem {
+            width: parent.width
+            height: 30
             
-            // model: daemon.projects
+            PlasmaComponents.Label {
+                anchors.fill: parent
+                text: modelData.name
+                // text: model.modelData.name
+            }
             
-            delegate: PlasmaComponents.ListItem {
-                width: parent.width
-                height: 30
+            Component.onCompleted: {
+                //+ console.log(modelData)
+            }
+            
+            MouseArea {
+                anchors.fill: parent
+                hoverEnabled: true
                 
-                PlasmaComponents.Label {
-                    anchors.fill: parent
-                    text: "Blank"
-                    // text: modelData.name
-                    // text: model.modelData.name
-                }
-                
-                Component.onCompleted: {
-                    // console.log(modelData)
-                }
-                
-                MouseArea {
-                    anchors.fill: parent
-                    hoverEnabled: true
-                    
-                    onClicked: {
-                        console.log(modelData)
-                        console.log(model.modelData.name)
-                        projectView.currentIndex = index
-                        selectedProject = model.modelData
-                    }
+                onClicked: {
+                    projectView.currentIndex = index
+                    selectedProject = model.modelData
                 }
             }
+        }
 
-            highlight: PlasmaComponents.Highlight {
-                pressed: true
+        highlight: PlasmaComponents.Highlight {
+            pressed: true
+        }
+    }
+    
+    ListView {
+        id: taskView
+        anchors {
+            top: parent.top
+            bottom: parent.bottom
+            right: parent.right
+            left: projectView.right
+        }
+        
+        model: dataSource.data.Toutatis[dataSource.data.Toutatis.projects[projectView.currentIndex].id + "/tasks"]
+        
+        delegate: PlasmaComponents.ListItem {
+            height: 30
+            
+            TaskItem {
+                anchors.fill: parent
+                task: model.modelData
             }
         }
         
-        ListView {
-            id: taskView
-            width: parent.width * 2 / 3
-            
-            model: selectedProject ? selectedProject.tasks : null
-            
-            delegate: PlasmaComponents.ListItem {
-                width: parent.width
-                height: 30
-                
-                PlasmaComponents.Label {
-                    anchors.fill: parent
-                    text: model.modelData.name
-                }
-                
-                MouseArea {
-                    anchors.fill: parent
-                    hoverEnabled: true
-                    
-                    onClicked: {
-                        console.log("Task clicked: " + model.modelData.id)
-                    }
-                }
-            }
-            
-            highlight: PlasmaComponents.Highlight {
-                pressed: true
-            }
+        highlight: PlasmaComponents.Highlight {
+            pressed: true
         }
     }
 }

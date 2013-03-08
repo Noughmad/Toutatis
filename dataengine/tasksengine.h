@@ -23,6 +23,7 @@
 #include <Plasma/DataEngine>
 #include "toutatis.h"
 
+class Project;
 class TasksEngine : public Plasma::DataEngine
 {
     Q_OBJECT
@@ -30,8 +31,14 @@ class TasksEngine : public Plasma::DataEngine
 public:
     TasksEngine(QObject* parent, const QVariantList& args);
     
+    virtual QStringList sources() const;
+    
     virtual bool sourceRequestEvent(const QString& source);
-    virtual bool updateSourceEvent(const QString& source);
+    
+private slots:
+    void sendProjects();
+    void tasksChanged();
+    void sendTasks(Project* project);
     
 private:
     Toutatis mDaemon;

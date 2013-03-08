@@ -20,8 +20,11 @@
 #ifndef TASK_H
 #define TASK_H
 
-#include "task_interface.h"
 #include "qtatis_export.h"
+
+#include <QObject>
+#include <QMetaType>
+#include <QDateTime>
 
 class Note;
 class Event;
@@ -29,9 +32,16 @@ class Project;
 
 class TaskPrivate;
 
-class QTATIS_EXPORT Task : public com::noughmad::toutatis::Task
+class QTATIS_EXPORT Task : public QObject
 {
     Q_OBJECT
+    Q_PROPERTY(QString id READ id)
+    Q_PROPERTY(bool valid READ isValid)
+    Q_PROPERTY(QString name READ name WRITE setName NOTIFY nameChanged)
+    Q_PROPERTY(QString status READ status WRITE setStatus NOTIFY statusChanged)
+    Q_PROPERTY(bool active READ isActive WRITE setActive NOTIFY activeChanged)
+    Q_PROPERTY(QDateTime lastStart READ lastStart NOTIFY activeChanged)
+    Q_PROPERTY(qlonglong duration READ duration)
     Q_PROPERTY(Project* project READ project)
     Q_PROPERTY(QList<Event*> events READ events NOTIFY eventsChanged)
     Q_PROPERTY(QList<Note*> notes READ notes NOTIFY notesChanged)
@@ -40,15 +50,35 @@ public:
     explicit Task(const QString& id, QObject* parent);
     virtual ~Task();
     
+    bool isValid() const;
+    
     Project* project() const;
     QList<Event*> events() const;
     QList<Note*> notes() const;
+    
+    QString id() const;
+    
+    QString name() const;
+    void setName(const QString& name);
+    
+    QString status() const;
+    void setStatus(const QString& status);
+    
+    bool isActive() const;
+    void setActive(bool active);
+    
+    qlonglong duration() const;
+    QDateTime lastStart() const;
     
 public slots:
     void updateEvents();
     void updateNotes();
     
 signals:
+    void nameChanged(const QString& name);
+    void statusChanged(const QString& status);
+    void activeChanged(bool active);
+
     void eventsChanged();
     void notesChanged();
     

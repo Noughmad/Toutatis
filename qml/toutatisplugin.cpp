@@ -35,8 +35,9 @@ void ToutatisPlugin::registerTypes(const char* uri)
     qmlRegisterUncreatableType<Task>(uri, 1, 0, "Task", reason);
     qmlRegisterUncreatableType<Event>(uri, 1, 0, "Event", reason);
     qmlRegisterUncreatableType<Note>(uri, 1, 0, "Note", reason);
-    
+        
     qRegisterMetaType<QList<Project*> >("QList<Project*>");
+    qRegisterMetaType<QList<Task*> >("QList<Task*>");
 }
 
 Q_EXPORT_PLUGIN2(qmltoutatisplugin, ToutatisPlugin);

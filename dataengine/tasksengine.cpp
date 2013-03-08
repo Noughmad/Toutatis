@@ -23,50 +23,70 @@
 
 TasksEngine::TasksEngine(QObject* parent, const QVariantList& args): DataEngine(parent, args)
 {
-    setMinimumPollingInterval(200);
-    // qRegisterMetaType<QObjectList>("QObjectList");
-    
     /**
      * TODO: Toutatis used signals for everything, so we should not need polling at all here. 
      */
+    
+    connect (&mDaemon, SIGNAL(projectsChanged()), SLOT(sendProjects()));
+    QTimer::singleShot(1, this, SLOT(sendProjects()));
+
+    foreach (Project* p, mDaemon.projects())
+    {
+        connect (p, SIGNAL(tasksChanged()), SLOT(tasksChanged()));
+        sendTasks(p);
+    }
+}
+
+QStringList TasksEngine::sources() const
+{
+    return QStringList() << "Toutatis";
 }
 
 bool TasksEngine::sourceRequestEvent(const QString& source)
 {
-    return updateSourceEvent(source);
-}
-
-bool TasksEngine::updateSourceEvent(const QString& source)
-{
-    if (source == "Projects")
+    if (source == "Toutatis")
     {
-        QStringList projects;
-        QObjectList objects;
+        sendProjects();
         foreach (Project* p, mDaemon.projects())
         {
-            projects << p->name();
-            objects << p;
+            sendTasks(p);
         }
-        
-        qDebug() << mDaemon.projects();
-        
-        setData(source, "names", projects);
-        setData(source, "projects", QVariant::fromValue(objects));
         return true;
     }
-    else if (source.startsWith("Project/"))
-    {
-        QString id = source.mid(8);
-        foreach (Project* p, mDaemon.projects())
-        {
-            if (p->id() == id)
-            {
-                setData(source, "Tasks", QVariant::fromValue(p->tasks()));
-                return true;
-            }
-        }
-    }
+    
     return false;
+}
+
+void TasksEngine::sendProjects()
+{
+    qDebug() << "Sending projects";
+    QList<QObject*> objects;
+    foreach (Project* p, mDaemon.projects())
+    {
+        objects << p;
+    }
+    setData("Toutatis", "projects", QVariant::fromValue(objects));
+}
+
+void TasksEngine::tasksChanged()
+{
+    Project* project = qobject_cast<Project*>(sender());
+    if (project)
+    {
+        sendTasks(project);
+    }
+}
+
+
+void TasksEngine::sendTasks(Project* project)
+{
+    QList<QObject*> objects;
+    foreach (Task* t, project->tasks())
+    {
+        objects << t;
+    }
+    qDebug() << QString("Sending %1 tasks for project %2").arg(objects.size()).arg(project->id());
+    setData("Toutatis", project->id() + "/tasks", QVariant::fromValue(objects));
 }
 
 K_EXPORT_PLASMA_DATAENGINE(toutatis, TasksEngine)

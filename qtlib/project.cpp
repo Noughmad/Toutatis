@@ -42,6 +42,7 @@ Project::Project(const QString& id, QObject* parent)
     connect (d->interface, SIGNAL(visibleChanged(bool)), SIGNAL(visibleChanged(bool)));
     
     qDebug() << id << d->interface->isValid();
+    updateTasks();
 }
 
 Project::~Project()
