@@ -36,7 +36,7 @@ Item {
             height: parent.height
             spacing: 5
             
-            PlasmaExtras.Title {
+            PlasmaExtras.Heading {
                 anchors.horizontalCenter: parent.horizontalCenter
                 text: i18n("Projects")
             }
@@ -68,7 +68,7 @@ Item {
                         
                         onClicked: {
                             projectView.currentIndex = index
-                            selectedProject = model.modelData
+                            selectedProject = modelData
                         }
                     }
                 }
@@ -106,13 +106,12 @@ Item {
             id: taskView
             height: parent.height
             width: parent.width - projectView.width - divider.width - 2 * parent.spacing
-            
-            model: selectedProject.tasks
-            
+
+            model: dataSource.data.Toutatis[selectedProject.id + "/tasks"]
             delegate: PlasmaComponents.ListItem {
                 
                 TaskItem {
-                    task: model.modelData
+                    // task: modelData
                 }
             }
         }

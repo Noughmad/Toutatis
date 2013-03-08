@@ -35,9 +35,9 @@ class QTATIS_EXPORT Project : public QObject
     Q_PROPERTY(QString id READ id)
     Q_PROPERTY(bool valid READ isValid)
 
-    Q_PROPERTY(QString name READ name WRITE setName)
-    Q_PROPERTY(QString client READ client WRITE setClient)
-    Q_PROPERTY(bool visible READ isVisible WRITE setVisible)
+    Q_PROPERTY(QString name READ name WRITE setName NOTIFY nameChanged)
+    Q_PROPERTY(QString client READ client WRITE setClient NOTIFY clientChanged)
+    Q_PROPERTY(bool visible READ isVisible WRITE setVisible NOTIFY visibleChanged)
     Q_PROPERTY(QList<Task*> tasks READ tasks NOTIFY tasksChanged)
     
 public:
