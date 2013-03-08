@@ -20,70 +20,66 @@ Item {
         }
     }
     
-    ListView {
-        id: projectView
+    Row {
+        spacing: 10
+        anchors.fill: parent
         
-        anchors {
-            top: parent.top
-            bottom: parent.bottom
-            left: parent.left
-        }
-        width: parent.width / 3
-        
-        model: dataSource.data.Toutatis.projects
-        
-        delegate: PlasmaComponents.ListItem {
-            width: parent.width
-            height: 30
+        ListView {
+            id: projectView
+            width: parent.width / 3
+            height: parent.height
             
-            PlasmaComponents.Label {
-                anchors.fill: parent
-                text: modelData.name
-                // text: model.modelData.name
-            }
+            model: dataSource.data.Toutatis.projects
             
-            Component.onCompleted: {
-                //+ console.log(modelData)
-            }
-            
-            MouseArea {
-                anchors.fill: parent
-                hoverEnabled: true
+            delegate: PlasmaComponents.ListItem {
+                width: parent.width
+                height: 30
                 
-                onClicked: {
-                    projectView.currentIndex = index
-                    selectedProject = model.modelData
+                PlasmaComponents.Label {
+                    anchors.fill: parent
+                    text: modelData.name
+                    // text: model.modelData.name
+                }
+                
+                Component.onCompleted: {
+                    //+ console.log(modelData)
+                }
+                
+                MouseArea {
+                    anchors.fill: parent
+                    hoverEnabled: true
+                    
+                    onClicked: {
+                        projectView.currentIndex = index
+                        selectedProject = model.modelData
+                    }
                 }
             }
-        }
 
-        highlight: PlasmaComponents.Highlight {
-            pressed: true
-        }
-    }
-    
-    ListView {
-        id: taskView
-        anchors {
-            top: parent.top
-            bottom: parent.bottom
-            right: parent.right
-            left: projectView.right
-        }
-        
-        model: dataSource.data.Toutatis[dataSource.data.Toutatis.projects[projectView.currentIndex].id + "/tasks"]
-        
-        delegate: PlasmaComponents.ListItem {
-            height: 30
-            
-            TaskItem {
-                anchors.fill: parent
-                task: model.modelData
+            highlight: PlasmaComponents.Highlight {
+                pressed: true
             }
         }
         
-        highlight: PlasmaComponents.Highlight {
-            pressed: true
+        ListView {
+            id: taskView
+            width: parent.width / 3
+            height: parent.height
+            
+            model: dataSource.data.Toutatis[dataSource.data.Toutatis.projects[projectView.currentIndex].id + "/tasks"]
+            
+            delegate: PlasmaComponents.ListItem {
+                height: 30
+                
+                TaskItem {
+                    anchors.fill: parent
+                    task: model.modelData
+                }
+            }
+            
+            highlight: PlasmaComponents.Highlight {
+                pressed: true
+            }
         }
     }
 }
