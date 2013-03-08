@@ -21,7 +21,7 @@ Item {
     }
     
     Row {
-        spacing: 10
+        spacing: 5
         anchors.fill: parent
         
         ListView {
@@ -38,11 +38,6 @@ Item {
                 PlasmaComponents.Label {
                     anchors.fill: parent
                     text: modelData.name
-                    // text: model.modelData.name
-                }
-                
-                Component.onCompleted: {
-                    //+ console.log(modelData)
                 }
                 
                 MouseArea {
@@ -61,10 +56,21 @@ Item {
             }
         }
         
+        PlasmaCore.SvgItem {
+            id: divider
+            height: parent.height
+            width: 3
+            
+            svg: PlasmaCore.Svg {
+                imagePath: "widgets/line"
+            }
+            elementId: "vertical-line"
+        }
+        
         ListView {
             id: taskView
-            width: parent.width / 3
             height: parent.height
+            width: parent.width - projectView.width - divider.width - 2 * parent.spacing
             
             model: dataSource.data.Toutatis[dataSource.data.Toutatis.projects[projectView.currentIndex].id + "/tasks"]
             
