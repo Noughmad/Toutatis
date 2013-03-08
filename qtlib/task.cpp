@@ -32,6 +32,8 @@ public:
     QList<Event*> events;
     QList<Note*> notes;
     com::noughmad::toutatis::Task* interface;
+    
+    int durationTimer;
 };
 
 Task::Task(const QString& id, QObject* parent)
@@ -53,8 +55,15 @@ Task::Task(const QString& id, QObject* parent)
     connect (d->interface, SIGNAL(statusChanged(QString)), SIGNAL(statusChanged(QString)));
     connect (d->interface, SIGNAL(activeChanged(bool)), SIGNAL(activeChanged(bool)));
     
+    connect (d->interface, SIGNAL(eventIdsChanged()), SIGNAL(durationChanged()));
+    connect (d->interface, SIGNAL(activeChanged(bool)), SIGNAL(durationChanged()));
+    
     updateEvents();
     updateNotes();
+    
+    d->durationTimer = -1;
+    connect (this, SIGNAL(activeChanged(bool)), SLOT(updateDurationTimer(bool)));
+    updateDurationTimer(isActive());
 }
 
 Task::~Task()
@@ -152,4 +161,30 @@ Project* Task::project() const
 {
     Q_D(const Task);
     return d->project;
+}
+
+void Task::updateDurationTimer(bool active)
+{
+    Q_D(Task);
+    if (active)
+    {
+        if (d->durationTimer < 0)
+        {
+            d->durationTimer = startTimer(1000);
+        }
+    }
+    else
+    {
+        killTimer(d->durationTimer);
+        d->durationTimer = -1;
+    }
+}
+
+void Task::timerEvent(QTimerEvent* event)
+{
+    Q_D(const Task);
+    if (event->timerId() == d->durationTimer)
+    {
+        emit durationChanged();
+    }
 }

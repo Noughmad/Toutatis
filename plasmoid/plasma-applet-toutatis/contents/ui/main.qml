@@ -5,8 +5,8 @@ import org.kde.plasma.components 0.1 as PlasmaComponents
 
 Item {
     id: main
-    property int minimumWidth: paintedWidth
-    property int minimumHeight: paintedHeight
+    property int minimumWidth: 500
+    property int minimumHeight: 200
     property QtObject selectedProject: null
     
     PlasmaCore.DataSource {
@@ -76,10 +76,6 @@ Item {
                 TaskItem {
                     task: model.modelData
                 }
-            }
-            
-            highlight: PlasmaComponents.Highlight {
-                pressed: true
             }
         }
     }

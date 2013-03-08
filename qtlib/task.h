@@ -41,7 +41,7 @@ class QTATIS_EXPORT Task : public QObject
     Q_PROPERTY(QString status READ status WRITE setStatus NOTIFY statusChanged)
     Q_PROPERTY(bool active READ isActive WRITE setActive NOTIFY activeChanged)
     Q_PROPERTY(QDateTime lastStart READ lastStart NOTIFY activeChanged)
-    Q_PROPERTY(qlonglong duration READ duration)
+    Q_PROPERTY(qlonglong duration READ duration NOTIFY durationChanged)
     Q_PROPERTY(Project* project READ project)
     Q_PROPERTY(QList<Event*> events READ events NOTIFY eventsChanged)
     Q_PROPERTY(QList<Note*> notes READ notes NOTIFY notesChanged)
@@ -81,6 +81,14 @@ signals:
 
     void eventsChanged();
     void notesChanged();
+    
+    void durationChanged();
+    
+private slots:
+    void updateDurationTimer(bool active);
+    
+protected:
+    virtual void timerEvent(QTimerEvent* event);
     
 private:
     TaskPrivate* const d_ptr;

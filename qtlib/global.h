@@ -3,7 +3,6 @@
 
 #include <QList>
 #include <QStringList>
-#include <QDebug>
 
 static const char* Service = "com.noughmad.Toutatis";
 
@@ -17,9 +16,7 @@ template <class T> void updateModelList(QList<T*>& list, const QStringList& ids,
     {
         oldIds << t->id();
     }
-    
-    qDebug() << "Updating model list " << oldIds << "->" << ids;
-    
+        
     foreach (T* t, list)
     {
         if (!ids.contains(t->id()))
