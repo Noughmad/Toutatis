@@ -59,15 +59,9 @@ Item {
             }
         }
         
-        PlasmaCore.SvgItem {
+        VerticalLine {
             id: divider
             height: parent.height
-            width: 3
-            
-            svg: PlasmaCore.Svg {
-                imagePath: "widgets/line"
-            }
-            elementId: "vertical-line"
         }
         
         ListView {
@@ -78,10 +72,8 @@ Item {
             model: dataSource.data.Toutatis[dataSource.data.Toutatis.projects[projectView.currentIndex].id + "/tasks"]
             
             delegate: PlasmaComponents.ListItem {
-                height: 30
                 
                 TaskItem {
-                    anchors.fill: parent
                     task: model.modelData
                 }
             }
