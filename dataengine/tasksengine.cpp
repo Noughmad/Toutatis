@@ -35,6 +35,8 @@ TasksEngine::TasksEngine(QObject* parent, const QVariantList& args): DataEngine(
         connect (p, SIGNAL(tasksChanged()), SLOT(tasksChanged()));
         sendTasks(p);
     }
+    
+    setData("Toutatis", "daemon", QVariant::fromValue(&mDaemon));
 }
 
 QStringList TasksEngine::sources() const

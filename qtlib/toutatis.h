@@ -25,8 +25,10 @@ public Q_SLOTS:
     void startTracking(const QString& id);
     void stopTracking();
     
-    QString findProject(const QString& name);
-    QString findTask(const QString& project, const QString& name);
+public:
+    Q_INVOKABLE QString findProject(const QString& name);
+    Q_INVOKABLE QString findTask(const QString& project, const QString& name);
+    Q_INVOKABLE QString createProject(const QString& name);
     
 signals:
     void projectsChanged();
@@ -35,5 +37,7 @@ private:
     ToutatisPrivate* const d_ptr;
     Q_DECLARE_PRIVATE(Toutatis)
 };
+
+Q_DECLARE_METATYPE(Toutatis*)
 
 #endif // TOUTATIS_H

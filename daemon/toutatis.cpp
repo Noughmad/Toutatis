@@ -47,7 +47,7 @@ Toutatis::Toutatis(QObject* parent) : QObject(parent)
         qDebug() << "Found existing database in " << mDatabase.databaseName();
     }
 
-    Q_ASSERT(mDatabase.tables().size() == 4);
+    Q_ASSERT(mDatabase.tables().size() == 5);
 
     new ToutatisAdaptor(this);
     QDBusConnection dbus = QDBusConnection::sessionBus();
