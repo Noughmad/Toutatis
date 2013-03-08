@@ -111,7 +111,7 @@ Item {
             delegate: PlasmaComponents.ListItem {
                 
                 TaskItem {
-                    // task: modelData
+                    task: modelData
                 }
             }
         }

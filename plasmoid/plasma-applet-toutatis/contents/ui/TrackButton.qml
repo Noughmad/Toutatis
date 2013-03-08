@@ -10,8 +10,8 @@ PlasmaComponents.Button {
     property QtObject task
     
     checked: task.active
-    text: checked ? "Stop" : "Start"
-    iconSource: checked ? "media-playback-pause" : "player-time"
+    text: task.active ? "Stop" : "Start"
+    iconSource: task.active ? "media-playback-pause" : "player-time"
     
     onClicked: {
         task.active = !task.active
