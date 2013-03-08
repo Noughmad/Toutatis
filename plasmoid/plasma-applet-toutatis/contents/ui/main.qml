@@ -5,6 +5,8 @@ import org.kde.plasma.components 0.1 as PlasmaComponents
 
 Item {
     id: main
+    property int minimumWidth: paintedWidth
+    property int minimumHeight: paintedHeight
     property QtObject selectedProject: null
     
     PlasmaCore.DataSource {
@@ -38,6 +40,7 @@ Item {
                 PlasmaComponents.Label {
                     anchors.fill: parent
                     text: modelData.name
+                    elide: Text.ElideRight
                 }
                 
                 MouseArea {

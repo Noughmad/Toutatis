@@ -8,6 +8,7 @@ Item {
     PlasmaComponents.Label {
         anchors.fill: parent
         text: task.name
+        elide: Text.ElideRight
     }
     
     MouseArea {
