@@ -32,6 +32,7 @@ Item {
         anchors.fill: parent
         
         Column {
+            id: projectColumn
             width: parent.width / 3
             height: parent.height
             spacing: 5
@@ -102,16 +103,59 @@ Item {
             height: parent.height
         }
         
-        ListView {
-            id: taskView
+        Column {
             height: parent.height
-            width: parent.width - projectView.width - divider.width - 2 * parent.spacing
+            width: parent.width - projectColumn.width - divider.width - 2 * parent.spacing
+            spacing: 5
+            
+            PlasmaExtras.Title {
+                text: i18n("Tasks")
+                anchors.horizontalCenter: parent.horizontalCenter
+            }
+            
+            ListView {
+                id: taskView
+                width: parent.width
+                height: model.length * 40
 
-            model: dataSource.data.Toutatis[selectedProject.id + "/tasks"]
-            delegate: PlasmaComponents.ListItem {
-                
-                TaskItem {
-                    task: modelData
+                model: dataSource.data.Toutatis[selectedProject.id + "/tasks"]
+                delegate: PlasmaComponents.ListItem {
+                    
+                    TaskItem {
+                        task: modelData
+                    }
+                }
+            }
+            
+            HorizontalLine {
+                width: parent.width
+            }
+            
+            Row {
+                width: parent.width - 105
+                height: 30
+                spacing: 0
+                PlasmaComponents.TextField {
+                    id: taskNameEdit
+                    anchors.fill: parent
+                    clearButtonShown: true
+                    
+                    onAccepted: {
+                        if (selectedProject && text) {
+                            selectedProject.createTask(text)
+                            text = ""
+                        }
+                    }
+                }
+                PlasmaComponents.Button {
+                    anchors.verticalCenter: parent.verticalCenter
+                    width: 100
+                    height: taskNameEdit.height
+
+                    text: i18n("Add task")
+                    onClicked: {
+                        taskNameEdit.accepted()
+                    }
                 }
             }
         }

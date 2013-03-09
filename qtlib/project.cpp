@@ -105,6 +105,12 @@ QList< Task* > Project::tasks() const
     return d->tasks;
 }
 
+void Project::createTask(const QString& name)
+{
+    Q_D(Project);
+    d->interface->createTask(name);
+}
+
 void Project::updateTasks()
 {
     Q_D(Project);

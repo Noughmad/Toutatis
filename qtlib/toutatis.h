@@ -28,7 +28,7 @@ public Q_SLOTS:
 public:
     Q_INVOKABLE QString findProject(const QString& name);
     Q_INVOKABLE QString findTask(const QString& project, const QString& name);
-    Q_INVOKABLE QString createProject(const QString& name);
+    Q_INVOKABLE void createProject(const QString& name);
     
 signals:
     void projectsChanged();

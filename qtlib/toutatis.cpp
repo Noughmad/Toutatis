@@ -65,10 +65,10 @@ QString Toutatis::findTask(const QString& project, const QString& name)
     return d->interface->findTask(project, name).value();
 }
 
-QString Toutatis::createProject(const QString& name)
+void Toutatis::createProject(const QString& name)
 {
     Q_D(Toutatis);
-    return d->interface->createProject(name).value();
+    d->interface->createProject(name);
 }
 
 void Toutatis::updateProjects()
