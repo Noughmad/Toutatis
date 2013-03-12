@@ -186,6 +186,7 @@ void Toutatis::stopTracking()
     QSqlQuery query;
     query.prepare("UPDATE Task SET active=0, lastStart=0 WHERE active=1;");
     query.exec();
+    task->setActive(false);
 
     mCurrentTask = QString();
     emit currentTaskChanged(QString());

@@ -8,12 +8,16 @@ PlasmaComponents.Button {
     width: 70
     
     property QtObject task
+    property bool tracking: task.active
     
-    checked: task.active
-    text: task.active ? "Stop" : "Start"
-    iconSource: task.active ? "media-playback-pause" : "player-time"
+    text: tracking ? "Stop" : "Start"
+    iconSource: tracking ? "media-playback-pause" : "player-time"
     
     onClicked: {
         task.active = !task.active
+    }
+    
+    onTrackingChanged: {
+        checked = tracking
     }
 }

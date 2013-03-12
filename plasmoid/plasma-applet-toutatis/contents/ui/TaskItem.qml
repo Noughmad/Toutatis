@@ -7,6 +7,18 @@ Item {
     property QtObject task
     height: 30
     
+    function formatDuration(duration) {
+        if (duration > 10 * 3600 * 1000)
+            text = i18np("%1 hour", "%1 hours", Math.floor(duration / 3600 / 1000), Math.floor(duration / 3600 / 1000))
+        else if (duration > 1 * 3600 * 1000)
+            text = i18n("%1 h, %2 min", Math.floor(duration / 3600 / 1000), Math.floor((duration / 60 / 1000) % 60))
+        else if (duration > 60 * 1000)
+            text = i18n("%1 min %2 s", Math.floor(duration / 60 / 1000), Math.floor((duration / 1000) % 60))
+        else
+            text = i18np("%1 second", "%1 seconds", Math.floor(duration / 1000), Math.floor(duration / 1000))
+        return text
+    }
+
     Row {
         spacing: 10
 
@@ -34,7 +46,7 @@ Item {
         
         PlasmaComponents.Label {
             height: parent.height
-            text: task.duration
+            text: formatDuration(task.duration)
         }
         
         PlasmaComponents.BusyIndicator {
