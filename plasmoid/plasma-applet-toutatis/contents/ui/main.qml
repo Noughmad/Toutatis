@@ -81,9 +81,11 @@ Item {
                             
                             visible: (projectView.currentIndex == index) || projectMouseArea.containsMouse
                             iconSource: "list-remove"
+                            onClicked: {
+                                modelData.remove()
+                            }
                         }
                     }
-                    
                 }
 
                 highlight: PlasmaComponents.Highlight {

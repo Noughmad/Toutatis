@@ -101,6 +101,7 @@ QStringList Toutatis::projectIds() const
 QString Toutatis::createProject(const QString& name, const QString& client)
 {
     Project* project = new Project(this);
+    connect(project, SIGNAL(removed()), SIGNAL(projectIdsChanged()));
     project->setName(name);
     project->setClient(client);
 

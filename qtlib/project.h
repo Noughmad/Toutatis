@@ -58,6 +58,7 @@ public:
     void setVisible(bool visible);
     
     Q_INVOKABLE void createTask(const QString& name);
+    Q_INVOKABLE void remove();
     
 public slots:
     void updateTasks();

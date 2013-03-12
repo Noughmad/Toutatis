@@ -118,3 +118,8 @@ void Project::updateTasks()
     emit tasksChanged();
 }
 
+void Project::remove()
+{
+    Q_D(Project);
+    d->interface->remove();
+}
