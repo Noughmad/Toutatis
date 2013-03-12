@@ -72,17 +72,23 @@ bool Task::isActive() const
 
 void Task::setActive(bool active)
 {
-    Toutatis* main = qobject_cast<Toutatis*>(parent()->parent());
-    Q_ASSERT(main);
-
-    if (active != isActive() && main->currentTask() != id())
+    if (active != isActive())   
     {
-        main->stopTracking();
-    }
-
-    if (active)
-    {
-        main->startTracking(id());
+        Toutatis* main = qobject_cast<Toutatis*>(parent()->parent());
+        Q_ASSERT(main);
+        
+        if (active)
+        {
+            if (main->isTracking())
+            {
+                main->stopTracking();
+            }
+            main->startTracking(id());
+        }
+        else
+        {
+            main->stopTracking();
+        }
     }
 
     emit activeChanged(active);
