@@ -37,7 +37,7 @@ Item {
             height: parent.height
             spacing: 5
             
-            PlasmaExtras.Heading {
+            PlasmaComponents.Label {
                 anchors.horizontalCenter: parent.horizontalCenter
                 text: i18n("Projects")
             }
@@ -64,6 +64,7 @@ Item {
                     }
 
                     MouseArea {
+                        id: projectMouseArea
                         anchors.fill: parent
                         hoverEnabled: true
                         
@@ -71,7 +72,18 @@ Item {
                             projectView.currentIndex = index
                             selectedProject = modelData
                         }
+                        
+                        PlasmaComponents.Button {
+                            anchors.right: parent.right
+                            anchors.top: parent.top
+                            anchors.bottom: parent.bottom
+                            width: height
+                            
+                            visible: (projectView.currentIndex == index) || projectMouseArea.containsMouse
+                            iconSource: "list-remove"
+                        }
                     }
+                    
                 }
 
                 highlight: PlasmaComponents.Highlight {
@@ -108,7 +120,7 @@ Item {
             width: parent.width - projectColumn.width - divider.width - 2 * parent.spacing
             spacing: 5
             
-            PlasmaExtras.Title {
+            PlasmaComponents.Label {
                 text: i18n("Tasks")
                 anchors.horizontalCenter: parent.horizontalCenter
             }
