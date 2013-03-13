@@ -8,24 +8,16 @@ Item {
     id: main
     property int minimumWidth: 500
     property int minimumHeight: 200
+
     property QtObject selectedProject: null
-    
-    Toutatis {
-        id: daemon
-    }
+    property QtObject daemon: dataSource.data.Toutatis.daemon
     
     PlasmaCore.DataSource {
         id: dataSource
         engine: "com.noughmad.toutatis"
         connectedSources: ["Toutatis"]
-        
-        onNewData: {
-            console.log("New data on source " + sourceName)
-            if (sourceName == "Toutatis") {
-                projectView.model = data.projects
-            }
-        }
     }
+    
     
     Row {
         spacing: 5
@@ -51,7 +43,7 @@ Item {
                 width: parent.width
                 height: 30 * model.length
 
-                model: daemon.projects
+                model: dataSource.data.Toutatis.projects
 
                 delegate: PlasmaComponents.ListItem {
                     width: parent.width
@@ -105,7 +97,7 @@ Item {
                     clearButtonShown: true
                     
                     onAccepted: {
-                        daemon.createProject(text)
+                        main.daemon.createProject(text)
                         text = ""
                     }
                 }
@@ -130,13 +122,16 @@ Item {
             ListView {
                 id: taskView
                 width: parent.width
-                height: model.length * 40
+                height: model.length * 35
 
                 model: dataSource.data.Toutatis[selectedProject.id + "/tasks"]
                 delegate: PlasmaComponents.ListItem {
+                    width: parent.width
+                    height: 35
                     
                     TaskItem {
                         task: modelData
+                        anchors.fill: parent
                     }
                 }
             }

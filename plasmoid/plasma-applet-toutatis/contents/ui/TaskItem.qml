@@ -5,7 +5,6 @@ import org.kde.plasma.components 0.1 as PlasmaComponents
 Item {
     id: top
     property QtObject task
-    height: 30
     
     function formatDuration(duration) {
         if (duration > 10 * 3600 * 1000)
@@ -18,54 +17,66 @@ Item {
             text = i18np("%1 second", "%1 seconds", Math.floor(duration / 1000), Math.floor(duration / 1000))
         return text
     }
-
-    Row {
-        spacing: 10
-
+    
+    MouseArea {
+        id: mouse
         anchors.fill: parent
-        
-        PlasmaComponents.Label {
-            height: parent.height
-            text: task.name
-            elide: Text.ElideRight
-        }
-        
-        VerticalLine {
-            height: parent.height
-        }
-        
-        PlasmaComponents.Label {
-            height: parent.height
-            text: task.status
-            elide: Text.ElideRight
-        }
-        
-        VerticalLine {
-            height: parent.height
-        }
-        
-        PlasmaComponents.Label {
-            height: parent.height
-            text: formatDuration(task.duration)
-        }
-        
-        PlasmaComponents.BusyIndicator {
-            height: parent.height * 0.8
-            width: parent.height * 0.8
-            anchors.verticalCenter: parent.verticalCenter
+        hoverEnabled: true
 
-            running: top.task.active
-            visible: top.task.active
+        Row {
+            id: row
+            spacing: 4
+
+            anchors.fill: parent
+            
+            PlasmaComponents.BusyIndicator {
+                id: busy
+                height: parent.height * 0.8
+                width: parent.height * 0.8
+                anchors.verticalCenter: parent.verticalCenter
+                
+                running: top.task.active
+                visible: top.task.active
+            }
+            
+            PlasmaComponents.Label {
+                height: parent.height
+                width: parent.width - 250 - (task.active ? (busy.width + row.spacing - 1) : 0)
+                text: task.name
+                elide: Text.ElideRight
+            }
+            
+            VerticalLine {
+                height: parent.height
+            }
+            
+            PlasmaComponents.Label {
+                height: parent.height
+                width: 70
+                text: task.status
+                elide: Text.ElideRight
+            }
+            
+            VerticalLine {
+                height: parent.height
+            }
+            
+            Item {
+                height: parent.height
+                width: 80
+
+                PlasmaComponents.Label {
+                    height: parent.height
+                    anchors.horizontalCenter: parent.horizontalCenter
+                    text: formatDuration(task.duration)
+                }
+            }
+            
+            TrackButton {
+                visible: task.active || mouse.containsMouse
+                height: parent.height
+                task: top.task
+            }
         }
-        
-        VerticalLine {
-            height: parent.height
-        }
-        
-        TrackButton {
-            height: parent.height
-            task: top.task
-        }
-        
     }
 }

@@ -21,14 +21,12 @@
 #include "project.h"
 #include "task.h"
 
+const char* ToutatisSource = "Toutatis";
+
 TasksEngine::TasksEngine(QObject* parent, const QVariantList& args): DataEngine(parent, args)
-{
-    /**
-     * TODO: Toutatis used signals for everything, so we should not need polling at all here. 
-     */
-    
+{    
     connect (&mDaemon, SIGNAL(projectsChanged()), SLOT(sendProjects()));
-    QTimer::singleShot(1, this, SLOT(sendProjects()));
+    sendProjects();
 
     foreach (Project* p, mDaemon.projects())
     {
@@ -36,17 +34,17 @@ TasksEngine::TasksEngine(QObject* parent, const QVariantList& args): DataEngine(
         sendTasks(p);
     }
     
-    setData("Toutatis", "daemon", QVariant::fromValue(&mDaemon));
+    setData(ToutatisSource, "daemon", QVariant::fromValue(&mDaemon));
 }
 
 QStringList TasksEngine::sources() const
 {
-    return QStringList() << "Toutatis";
+    return QStringList() << ToutatisSource;
 }
 
 bool TasksEngine::sourceRequestEvent(const QString& source)
 {
-    if (source == "Toutatis")
+    if (source == ToutatisSource)
     {
         sendProjects();
         foreach (Project* p, mDaemon.projects())
@@ -67,7 +65,7 @@ void TasksEngine::sendProjects()
     {
         objects << p;
     }
-    setData("Toutatis", "projects", QVariant::fromValue(objects));
+    setData(ToutatisSource, "projects", QVariant::fromValue(objects));
 }
 
 void TasksEngine::tasksChanged()
@@ -88,7 +86,7 @@ void TasksEngine::sendTasks(Project* project)
         objects << t;
     }
     qDebug() << QString("Sending %1 tasks for project %2").arg(objects.size()).arg(project->id());
-    setData("Toutatis", project->id() + "/tasks", QVariant::fromValue(objects));
+    setData(ToutatisSource, project->id() + "/tasks", QVariant::fromValue(objects));
 }
 
 K_EXPORT_PLASMA_DATAENGINE(toutatis, TasksEngine)
