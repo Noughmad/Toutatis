@@ -5,6 +5,8 @@ import org.kde.plasma.components 0.1 as PlasmaComponents
 Item {
     id: top
     property QtObject task
+    property bool choosingStatus: false
+    property variant statusStrings: ["done", "inprogress", "todo", "urgent", "cancelled"]
     
     function formatDuration(duration) {
         if (duration > 10 * 3600 * 1000)
@@ -41,7 +43,7 @@ Item {
             
             PlasmaComponents.Label {
                 height: parent.height
-                width: parent.width - 250 - (task.active ? (busy.width + row.spacing - 1) : 0)
+                width: parent.width - 260 - (choosingStatus ? 100 : (task.active ? (busy.width + row.spacing - 1) : 0))
                 text: task.name
                 elide: Text.ElideRight
             }
@@ -50,18 +52,22 @@ Item {
                 height: parent.height
             }
             
-            PlasmaComponents.Label {
+            StatusButton {
+                visible: !choosingStatus
                 height: parent.height
-                width: 70
-                text: task.status
-                elide: Text.ElideRight
+                width: 80
+                status: task.status
+                
+                onClicked: choosingStatus = true
             }
             
             VerticalLine {
+                visible: !choosingStatus
                 height: parent.height
             }
             
             Item {
+                visible: !choosingStatus
                 height: parent.height
                 width: 80
 
@@ -73,9 +79,24 @@ Item {
             }
             
             TrackButton {
-                visible: task.active || mouse.containsMouse
+                visible: (task.active || mouse.containsMouse) && !choosingStatus
                 height: parent.height
                 task: top.task
+            }
+            
+            Repeater {
+                id: statusChooser
+              
+                model: statusStrings
+                delegate: StatusButton {
+                    visible: choosingStatus
+                    height: parent.height
+                    status: modelData
+                    onClicked: {
+                        task.status = status
+                        choosingStatus = false
+                    }
+                }
             }
         }
     }
