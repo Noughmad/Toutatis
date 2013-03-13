@@ -9,7 +9,7 @@ Item {
     property int minimumWidth: 500
     property int minimumHeight: 200
 
-    property QtObject selectedProject: null
+    property QtObject selectedProject: projectView.model[projectView.currentIndex]
     property QtObject daemon: dataSource.data.Toutatis.daemon
     
     PlasmaCore.DataSource {
@@ -17,7 +17,6 @@ Item {
         engine: "com.noughmad.toutatis"
         connectedSources: ["Toutatis"]
     }
-    
     
     Row {
         spacing: 5
@@ -62,7 +61,6 @@ Item {
                         
                         onClicked: {
                             projectView.currentIndex = index
-                            selectedProject = modelData
                         }
                         
                         PlasmaComponents.Button {
