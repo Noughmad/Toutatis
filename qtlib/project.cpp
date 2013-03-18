@@ -35,7 +35,7 @@ Project::Project(const QString& id, QObject* parent)
 , d_ptr(new ProjectPrivate)
 {
     Q_D(Project);
-    d->interface = new com::noughmad::toutatis::Project(Service, "/Project/" + id, QDBusConnection::sessionBus(), this);
+    d->interface = new com::noughmad::toutatis::Project(Service, "/Project/" + cleanId(id), QDBusConnection::sessionBus(), this);
     connect (d->interface, SIGNAL(taskIdsChanged()), SLOT(updateTasks()));
     connect (d->interface, SIGNAL(nameChanged(QString)), SIGNAL(nameChanged(QString)));
     connect (d->interface, SIGNAL(clientChanged(QString)), SIGNAL(clientChanged(QString)));

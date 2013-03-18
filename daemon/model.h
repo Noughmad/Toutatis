@@ -70,6 +70,8 @@ public:
     template <class T>
     static void createTable();
     
+    static QString cleanId(const QString& uuid);
+    
 public slots:
     void remove();
 
@@ -111,7 +113,7 @@ void Model::initialize(const QString& id)
     
     new Adaptor(qobject_cast<T*>(this));
     QDBusConnection dbus = QDBusConnection::sessionBus();
-    QString path = QString("/%1/%2").arg(mTableName).arg(mId);
+    QString path = QString("/%1/%2").arg(mTableName).arg(cleanId(mId));
     dbus.registerObject(path, this);
 }
 

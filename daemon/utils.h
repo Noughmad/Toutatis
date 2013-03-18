@@ -14,8 +14,6 @@
 #include <QVariant>
 #include <QSqlQuery>
 
-class Model;
-class Model;
 class QJsonObject;
 class QSqlQuery;
 

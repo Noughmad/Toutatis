@@ -61,4 +61,3 @@ QJsonObject Utils::serializeObject(const QStringList& properties, const QSqlQuer
     
     return QJsonObject::fromVariantMap(map);
 }
-

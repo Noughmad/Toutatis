@@ -28,7 +28,7 @@ public:
 };
 
 Note::Note(const QString& id, QObject* parent)
-: com::noughmad::toutatis::Note(Service, "/Note/" + id, QDBusConnection::sessionBus(), parent)
+: com::noughmad::toutatis::Note(Service, "/Note/" + cleanId(id), QDBusConnection::sessionBus(), parent)
 , d_ptr(new NotePrivate)
 {
     Q_D(Note);

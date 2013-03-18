@@ -178,10 +178,6 @@ void Model::setupId(const QString& id)
     if (mId.isEmpty())
     {
         mId = QUuid::createUuid().toString();
-        mId.remove(mId.size()-1, 1);
-        mId.remove(0, 1);
-        mId.replace(QRegExp("[^A-Za-z0-9]"), "_");
-     
         create();
     }
     else
@@ -201,3 +197,11 @@ void Model::setupId(const QString& id)
     registerObject(this);
 }
 
+QString Model::cleanId(const QString& uuid)
+{
+    QString id = uuid;
+    id.remove(id.size()-1, 1);
+    id.remove(0, 1);
+    id.replace(QRegExp("[^A-Za-z0-9]"), "_");
+    return id;
+}

@@ -13,7 +13,8 @@ class Client : public QObject
 public:
     explicit Client(QObject* parent = 0);
     virtual ~Client();
-    bool parseArguments(const QStringList& arguments);
+    void parseArguments(const QString& project, const QString& task, const QString& command, const QStringList& args, bool create);
+    
 
 private:
     Project* getProject(const QString& name);

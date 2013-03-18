@@ -11,6 +11,8 @@ set(Toutatis_client_SRCS
     client.cpp
 )
 
+set (CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fexceptions")
+
 add_executable(toutatis ${Toutatis_client_SRCS})
 target_link_libraries(toutatis qtatis ${QT_QTCORE_LIBRARY})
 

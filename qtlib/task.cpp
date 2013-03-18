@@ -41,7 +41,8 @@ Task::Task(const QString& id, QObject* parent)
 , d_ptr(new TaskPrivate)
 {
     Q_D(Task);
-    d->interface = new com::noughmad::toutatis::Task(Service, "/Task/" + id, QDBusConnection::sessionBus(), this);
+    d->interface = new com::noughmad::toutatis::Task(Service, "/Task/" + cleanId(id)
+    , QDBusConnection::sessionBus(), this);
     
     qDebug() << "Created a task" << id << d->interface->path();
     

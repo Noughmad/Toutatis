@@ -69,18 +69,18 @@ Client::~Client()
 
 }
 
-bool Client::parseArguments(const QStringList& arguments)
+void Client::parseArguments(const QString& project, const QString& task, const QString& command, const QStringList& args, bool create)
 {
-    QStringList a = arguments;
-    a.removeFirst();
-    Arguments args(a);
-
-    Project* project = getProject(args.project);
-    Task* task = getTask(args.task, args.project);
+    Project* p = getProject(project);
+    Task* t = getTask(task, project);
     
     QTextStream stream(stdout);
-        
-    if (args.command == "list-projects")
+    
+    if (command == "status")
+    {
+        stream << "TODO: print status";
+    }
+    else if (command == "list-projects")
     {
         if (mDaemon->projects().isEmpty())
         {
@@ -91,39 +91,27 @@ bool Client::parseArguments(const QStringList& arguments)
             foreach (Project* p, mDaemon->projects())
             {
                 stream << p->name();
-                if (p->client().isEmpty())
+                if (!p->client().isEmpty())
                 {
-                    stream << " (" << p->client() << ')' << endl;
+                    stream << " (" << p->client() << ')';
                 }
+                stream << endl;
             }
         }
-        return true;
     }
-    else if (args.command == "list-tasks")
+    else if (command == "list-tasks")
     {
-        if (!project)
+        if (!p)
         {
-            qWarning() << "No project specified";
+            stream << "No project found: " << project;
+            return;
         }
-        else if (project->tasks().isEmpty())
+        
+        foreach (Task* t, p->tasks())
         {
-            stream << "No tasks for project \"" << project->name() << "\"" << endl;
+            stream << t->name() << " | " << t->status() << " | " << t->duration() << endl;
         }
-        else
-        {
-            foreach (Task* t, project->tasks())
-            {
-                stream << t->name();
-                if (!t->status().isEmpty())
-                {
-                    stream << " (" << t->status() << ')' << endl;
-                }
-            }
-        }
-        return true;
     }
-
-    return false;
 }
 
 Project* Client::getProject(const QString& name)
