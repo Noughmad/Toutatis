@@ -112,6 +112,15 @@ void Client::parseArguments(const QString& project, const QString& task, const Q
             stream << t->name() << " | " << t->status() << " | " << t->duration() << endl;
         }
     }
+    else if (command == "sync" || command == "synchronize")
+    {
+        if (args.isEmpty())
+        {
+            stream << "Sync requires a destination" << endl;
+            return;
+        }
+        mDaemon->synchronize(args.first());
+    }
 }
 
 Project* Client::getProject(const QString& name)

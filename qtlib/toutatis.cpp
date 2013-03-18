@@ -77,3 +77,10 @@ void Toutatis::updateProjects()
     updateModelList(d->projects, d->interface->projectIds(), this);
     emit projectsChanged();
 }
+
+void Toutatis::synchronize(const QString& destination)
+{
+    Q_D(Toutatis);
+    d->interface->synchronize(destination);
+}
+

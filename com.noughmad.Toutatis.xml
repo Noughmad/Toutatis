@@ -42,5 +42,8 @@
       <arg name="project" type="s" direction="in"/>
       <arg name="task" type="s" direction="in"/>
     </method>
+    <method name="synchronize">
+      <arg name="destination" type="s" direction="in"/>
+    </method>
   </interface>
 </node>

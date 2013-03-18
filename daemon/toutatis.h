@@ -31,7 +31,7 @@ public slots:
     QString findProject(const QString& name);
     QString findTask(const QString& project, const QString& task);
     
-    void synchronize(const QUrl& destination);
+    void synchronize(const QString& destination);
 
 signals:
     void projectIdsChanged();

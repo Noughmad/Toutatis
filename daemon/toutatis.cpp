@@ -229,7 +229,7 @@ QString Toutatis::findTask(const QString& project, const QString& task)
     }
 }
 
-void Toutatis::synchronize(const QUrl& destination)
+void Toutatis::synchronize(const QString& destination)
 { 
     QSqlQuery lastQuery;
     lastQuery.prepare("SELECT time FROM Sync WHERE destination=:url");
