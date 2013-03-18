@@ -2,3 +2,7 @@
 build
 *~
 *.kate-swp
+venv
+*.pyc
+*.pyo
+*_test.db
