@@ -4,7 +4,7 @@ DEBUG = True
 TEMPLATE_DEBUG = DEBUG
 
 ADMINS = (
-    # ('Your Name', 'your_email@example.com'),
+    ('Miha', 'miha@noughmad.eu'),
 )
 
 MANAGERS = ADMINS
@@ -97,11 +97,26 @@ MIDDLEWARE_CLASSES = (
     'django.middleware.common.CommonMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
-    'ntasks.middleware.RequireLoginMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
+    'ntasks.middleware.RequireLoginMiddleware',
     # Uncomment the next line for simple clickjacking protection:
     # 'django.middleware.clickjacking.XFrameOptionsMiddleware',
+)
+
+TEMPLATE_CONTEXT_PROCESSORS = (
+  'django.contrib.auth.context_processors.auth',
+  'django.core.context_processors.debug',
+  'django.core.context_processors.i18n',
+  'django.core.context_processors.media',
+  'django.core.context_processors.static',
+  'django.core.context_processors.tz',
+  'django.contrib.messages.context_processors.messages',
+  'django.core.context_processors.request',
+  'social_auth.context_processors.social_auth_by_name_backends',
+  'social_auth.context_processors.social_auth_backends',
+  'social_auth.context_processors.social_auth_by_type_backends',
+  'social_auth.context_processors.social_auth_login_redirect',
 )
 
 ROOT_URLCONF = 'ntasks.urls'
@@ -125,6 +140,7 @@ INSTALLED_APPS = (
     'django.contrib.staticfiles',
     'toutatis',
     'django_extensions',
+    'social_auth',
     # Uncomment the next line to enable the admin:
     # 'django.contrib.admin',
     # Uncomment the next line to enable admin documentation:
@@ -164,9 +180,32 @@ LOGIN_REQUIRED_URLS = (
     r'^/(.*)$',
 )
 LOGIN_REQUIRED_URLS_EXCEPTIONS = (
-    r'^$',
     r'^/public/(.*)$',
-    r'^/login/(.*)$',
-    r'^/register/(.*)$',
-    r'^/logout/(.*)$',
+    r'^/accoutns/(.*)$',
+    r'^/auth/(.*)$',
 )
+
+AUTHENTICATION_BACKENDS = (
+    'social_auth.backends.twitter.TwitterBackend',
+    'social_auth.backends.facebook.FacebookBackend',
+   # 'social_auth.backends.google.GoogleOAuthBackend',
+    'social_auth.backends.google.GoogleOAuth2Backend',
+   # 'social_auth.backends.google.GoogleBackend',
+   # 'social_auth.backends.yahoo.YahooBackend',
+    'social_auth.backends.browserid.BrowserIDBackend',
+   # 'social_auth.backends.contrib.linkedin.LinkedinBackend',
+   # 'social_auth.backends.contrib.disqus.DisqusBackend',
+   # 'social_auth.backends.contrib.livejournal.LiveJournalBackend',
+   # 'social_auth.backends.contrib.orkut.OrkutBackend',
+   # 'social_auth.backends.contrib.foursquare.FoursquareBackend',
+    'social_auth.backends.contrib.github.GithubBackend',
+   # 'social_auth.backends.contrib.vkontakte.VKontakteBackend',
+   # 'social_auth.backends.contrib.live.LiveBackend',
+   # 'social_auth.backends.contrib.skyrock.SkyrockBackend',
+   # 'social_auth.backends.contrib.yahoo.YahooOAuthBackend',
+   # 'social_auth.backends.contrib.readability.ReadabilityBackend',
+    'social_auth.backends.OpenIDBackend',
+    'django.contrib.auth.backends.ModelBackend',
+)
+
+from secrets import *
