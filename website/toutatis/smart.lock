@@ -1,0 +1,25 @@
+{
+  "meteor": {
+    "git": "https://github.com/meteor/meteor.git",
+    "branch": "master",
+    "commit": "f07715dc70de16a7aab84e56ab0c6cbd9c1f9dc6"
+  },
+  "dependencies": {
+    "basePackages": {
+      "accounts-persona": {},
+      "ZURB Foundation": {}
+    },
+    "packages": {
+      "accounts-persona": {
+        "git": "https://github.com/vladikoff/meteor-accounts-persona.git",
+        "tag": "v0.1.3",
+        "commit": "ae571259ca891673356bec8168aec375f39ba04e"
+      },
+      "ZURB Foundation": {
+        "git": "https://github.com/IslamMagdy/meteor-foundation.git",
+        "tag": "v3.2.0",
+        "commit": "a27c84be95dc73f8b6c71a98e6c9bbe6736992f2"
+      }
+    }
+  }
+}
